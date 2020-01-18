@@ -933,7 +933,7 @@ function update(renderer, scene, camera, controls, clock, sceneOrtho, cameraOrth
 	}
 	
 	if (boolRot === true){
-		geo.rotation.y -= 0.01;
+		geoBuf.rotation.y -= 0.01;
 
 		if (box !== undefined){
 			box.rotation.y -= 0.01;
