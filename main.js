@@ -940,7 +940,7 @@ function update(renderer, scene, camera, controls, clock, sceneOrtho, cameraOrth
 		}
 
 		if (mirrorGeo !== undefined){
-			mirrorGeo.rotation.y -= 0.01; 
+			mirrorGeoBuf.rotation.y -= 0.01; 
 		}
 	}
 
