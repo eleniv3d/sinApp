@@ -42,6 +42,33 @@ function addGeo(objMaterial, tog, xSin, zSin, pSin, mAttr ) {
 	columngeoBuf = new THREE.BufferGeometry().fromGeometry( columnGeo );
 
 	geo = new THREE.Mesh(columnGeo, objMaterial);
+
+	//find bounding box for Ioanna
+	test = geo.geometry.vertices;
+	xlist = []
+	ylist = []
+	zlist = []
+
+	for (i = 0; i < test.length; i++) {
+		xlist.push( test[i].x )
+		ylist.push( test[i].y )
+		zlist.push (test[i].z)
+	}
+	xmax = Math.max.apply(null,xlist);
+	console.log(xmax);
+	xmin = Math.min.apply(null,xlist);
+	console.log(xmin);
+
+	ymax = Math.max.apply(null,ylist);
+	console.log(ymax);
+	ymin = Math.min.apply(null,ylist);
+	console.log(ymin);
+
+	zmax = Math.max.apply(null,zlist);
+	console.log(zmax);
+	zmin = Math.min.apply(null,zlist);
+	console.log(zmin);
+
 	geoBuf = new THREE.Mesh(columngeoBuf, objMaterial);
 
 	geoBuf.castShadow = true;
