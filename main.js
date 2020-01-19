@@ -380,11 +380,11 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 );
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 );
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0);
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0);
 		}
 
 	} );
@@ -398,11 +398,11 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 );
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 );
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0);
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0);
 		}
 
 	} );
@@ -420,11 +420,11 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0);
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0);
 		}
 
 	} );
@@ -434,11 +434,11 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0)
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0)
 		}
 
 	} );
@@ -448,11 +448,11 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin,mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0)
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0)
 		}
 
 	} );
@@ -462,11 +462,11 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00,  1 )
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)',  1 )
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0)
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0)
 		}
 
 	} );
@@ -480,11 +480,11 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0)
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0)
 		}
 
 	} );
@@ -494,11 +494,11 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0)
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0)
 		}
 
 	} );
@@ -508,11 +508,11 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0)
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0)
 		}
 
 	} );
@@ -522,11 +522,11 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0)
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0)
 		}
 
 	} );
@@ -540,12 +540,12 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 				addMirrorAxis()
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0)
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0)
 		}
 	} );
 
@@ -555,11 +555,11 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0)
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0)
 		}
 
 	} );
@@ -573,12 +573,12 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 				addMirrorAxis()
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0)
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0)
 		}
 	} );
 
@@ -588,12 +588,12 @@ function init() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 				addMirrorAxis()
 			}
 		}
 		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0)
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0)
 		}
 	} );
 
@@ -607,14 +607,14 @@ function init() {
 	// initialize objects
 	concreteTog = false;
 
-	objMaterial = getMaterial('lambert', 'rgb( 198, 69, 33)');
-	mirrorObjMaterial =  getMaterial('lambert', 'rgb(240, 240, 255)');
+	objMaterial = getMaterial('lambert', 'rgb( 255, 50, 50)');
+	mirrorObjMaterial =  getMaterial('lambert', 'rgb(220, 220, 220)');
 	
 	addGeo(objMaterial, false, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
 
 	var lightLeft = getSpotLight(1, 'rgb(255, 220, 180)');
 	var lightRight = getSpotLight(1, 'rgb(255, 220, 180)');
-	var lightBottom = getPointLight(0.33, 'rgb(255, 220, 150)');
+	var lightBottom = getPointLight(0.33, 'rgb(255, 220, 180)');
 
 	lightLeft.position.x = -300;
 	lightLeft.position.y = 200;
@@ -713,10 +713,10 @@ function init() {
 	folderHorizontal.add( propsHorizontal, 'Enabled' );
 	folderHorizontal.add( propsHorizontal, 'Plane', -300, 0, -5 ).onChange( function () {
 		if ( boolSlice == true){
-			addSlice( geo, sliceLine, sliceGeometry, 0xff0000, 0)
+			addSlice( geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0)
 		}
 		if (mirrorTog === true){
-			addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+			addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 		}
 		
 	} );
@@ -1120,13 +1120,13 @@ function concrete() {
 
 	addGeo(objMaterial, true, xSin, zSin, pSin,mAttr, iterations, fourier, concreteTog)
 	if (boolSlice === true){
-		addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0);
+		addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 50, 50)', 0);
 	}
 
 	if (mirrorTog === true){
 		addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 		if (boolSlice === true){
-			addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 );
+			addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 );
 		}
 	}
 	
@@ -1150,7 +1150,7 @@ function slice() {
 	
 	if (boolSlice === true){
 		sliceGeometry = new THREE.Geometry();
-		var sliceMaterial = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 1 } );
+		var sliceMaterial = new THREE.LineBasicMaterial( { color: 'rgb( 255, 50, 50)', linewidth: 1 } );
 		vertex1 = new THREE.Vector3( helperDataSt[(layerIndex)*(nSegments)+1].x*5, helperDataSt[(layerIndex)*(nSegments)+1].z*5,0)
 		for (var ka = (layerIndex)*(nSegments)+1; ka < (layerIndex+1)*(nSegments); ka++) {
 			sliceGeometry.vertices.push( new THREE.Vector3( helperDataSt[ka].x*5 , helperDataSt[ka].z*5 , 0 ));
@@ -1166,7 +1166,7 @@ function slice() {
 		sceneOrtho.add(sliceLine)
 
 		if (mirrorTog === true){
-			addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+			addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb(220, 220, 220)', 1 )
 			addMirrorAxis()
 		}
 	}
@@ -1196,7 +1196,7 @@ function mirror() {
 	if (mirrorTog === true){
 		addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
 		if (boolSlice === true){
-			addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+			addSlice(mirrorGeo, sliceLine, sliceGeometry,'rgb(220, 220, 220)', 1 )
 			addMirrorAxis()
 		}
 	}else{

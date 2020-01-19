@@ -5,13 +5,13 @@
 
 /* border before any enabled/disabled */
 .dg .cr.boolean {
-    border-left: 3px solid rgb(133, 121, 127);
+    border-left: 3px solid rgb(255, 255, 255);
 }
 
 
 /* border before any slider */
 .dg .cr.number {
-    border-left: 3px solid rgb(133, 121, 127);
+    border-left: 3px solid rgb(255, 255, 255);
 }
 
 .dg .cr.color {

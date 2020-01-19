@@ -14,6 +14,10 @@
     border-left: 0px solid rgb(126, 98, 126);
 }
 
+.dg .cr.string {
+    border-left: 0px solid rgb(126, 98, 126);
+}
+
 /* slider color */
 .dg .c .slider-fg {
     background: rgb(126, 98, 126);
@@ -31,13 +35,27 @@
     outline: none;
 }
 
+/* input text */
 .dg .cr.number input[type=text] {
     color: rgb(126, 98, 126);
 }
 
+/* becomes white when you type */
 .dg .c input[type=text]:focus {
     background: #494949;
     color: #fff
 }
+
+.dg {
+    color: #eee;
+    font: 11px 'Lucida Grande', sans-serif;
+    text-shadow: 0 -1px 0 #111
+}
+
+.dg .c select {
+    margin-top: 2px
+}
+
+
 
 .dg.a { margin-right:20px !important; }
