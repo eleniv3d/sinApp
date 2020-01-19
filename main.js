@@ -41,7 +41,143 @@ var fourier = new function(){
 mirrorTog = false;
 boolSlice = false;
 
+
+	// /// ** bufferGeometry
+	// var bufferGeometry = new THREE.BufferGeometry().fromGeometry( geometry );
+
+	// var vertexDisplacement = new Float32Array( bufferGeometry.attributes.position.count);
+	// for (var i = 0; i < vertexDisplacement.length; i += 1){
+	// 	vertexDisplacement[i] = Math.sin(i);
+	// }
+	// bufferGeometry.computeFaceNormals();
+	// bufferGeometry.computeVertexNormals();
+	// /// ** 
+
+function vertexShader() {
+	return `
+	varying vec3 world_pos;
+	varying vec3 normalInterp;
+	varying float frequency;
+
+    void main() {
+	  	vec3 p = position;
+
+		frequency = 1.8; 
+	  	p.x += max( 0.0, abs(sin( p.y * frequency )) * 1. );
+	  	p.z += max( 0.0, abs(cos( p.y * frequency )) * 1. );
+
+		gl_Position = projectionMatrix * modelViewMatrix * vec4( p, 1.0 );
+		  
+		world_pos = p; 
+		normalInterp = normal;
+    }
+  `
+}
+
+function fragmentShader() {
+	return `
+	precision mediump float; // set float to medium precision
+
+	uniform vec3 lightPos1;
+	uniform vec3 lightPos2;
+	uniform vec3 lightPos3;
+
+	uniform sampler2D texture1;
+
+	varying vec3 world_pos;
+	varying vec3 normalInterp;
+	varying float frequency;
+
+	// const vec3 ambientColor = vec3(0.870, 0.831, 0.721);
+	// const vec3 diffuseColor = vec3(0.870, 0.831, 0.721);
+	// const vec3 specColor = vec3(0.870, 0.831, 0.721);
+
+	vec3 getPosNormalized(){
+		float x = world_pos.x / 80.0 ;
+		float y = world_pos.y / 300. + 1. ;
+		float z = world_pos.z / 80.0 ;
+		return vec3(x, y, z);
+	}
+
+	vec2 getZylindricalUvs(){
+		vec3 pos_n = getPosNormalized();
+
+		float a = atan(pos_n.x, -pos_n.z) /3.14;
+        float us = mod( ((a + 1.)) * 0.5 * 4.0, 1.0);  // from 0 to 1
+		float vs = mod( pos_n.y * 12., 1.0) ;          // from 0 to 1
+		
+		return vec2(us, vs);
+	}
+
+	void main() {
+
+		//calculate uvs
+		vec2 vUv = getZylindricalUvs();
+
+		// look up texture
+		highp vec2 tex2 = vec2(vUv.x, vUv.y);
+		vec4 texColor = texture2D(texture1, tex2);
+
+		//normal and light direction
+		vec3 normal = normalize(normalInterp); 
+		vec3 light1 = normalize(lightPos1 - world_pos);
+		vec3 light2 = normalize(lightPos2 - world_pos);
+		vec3 light3 = normalize(lightPos3 - world_pos);
+		float lambert = max(0.0, dot(normal,light1)) 
+					  + max(0.0, dot(normal,light2)) 
+					  + max(0.0, dot(normal,light3) + 0.05);
+
+		// ambient term
+		vec3 ambient = texColor.xyz; 
+		
+		// diffuse term
+		vec3 diffuse = texColor.xyz * lambert; // diffuse term
+
+		
+		// (fake) specular term
+		vec3 eye = normalize(-world_pos);
+		vec3 r1 = 2.0*lambert* normal - light1;
+		vec3 r2 = 2.0*lambert* normal - light2;
+		vec3 r3 = 2.0*lambert* normal - light3;
+
+		float spec_intensity = sin( (world_pos.y -2. ) * frequency * 2.) 
+							  *(  pow(max(0.0, -dot(eye, r1) - 0.4), 3.0) 
+								+ pow(max(0.0, -dot(eye, r2) - 0.4), 3.0) );
+								// + pow(max(0.0, -dot(eye, r3)), 3.0)  );
+
+		vec3 specular = texColor.xyz * spec_intensity;
+
+		// (fake) occclusion
+		float occlusion = 1.0 - 0.4 *  sin( (world_pos.y+ 1.5) * frequency * 2.) ;
+
+		vec3 color = 0.65 * ambient - 0.1 * occlusion 
+				   + 0.65 * diffuse  - 0.1 * occlusion
+				   + specular * 0.03; 
+
+	    gl_FragColor = vec4(color , 1.0);
+	}
+`
+}
+
+function getCustomMaterial(){
+	uniforms = {
+	lightPos1 : {type: 'vec3', value: [-300, 200, 40]},
+	lightPos2 : {type: 'vec3', value: [300, 200, 40]},
+	lightPos3 : {type: 'vec3', value: [0, 100, 30]},
+	texture1: { type: 't', value:  THREE.ImageUtils.loadTexture( '/assets/textures/AS2_concrete_13.jpg' ) } //concrete_texture
+	}
+	selectedMaterial = new THREE.ShaderMaterial({
+		side: THREE.DoubleSide,
+		uniforms: uniforms,
+		fragmentShader: fragmentShader(),
+		vertexShader: vertexShader(),
+	})
+	return selectedMaterial;
+}
+
+
 function addGeo(objMaterial, tog, xSin, zSin, pSin, mAttr, iterations, fourier ) {
+
 	if ( geo !== undefined ) {
 		scene.remove( geoBuf );
 		//geo.geometry.dispose();
@@ -85,7 +221,9 @@ function addGeo(objMaterial, tog, xSin, zSin, pSin, mAttr, iterations, fourier )
 	scene.add(geoBuf);	
 }
 
+
 function addMirrorGeo(mirrorObjMaterial, tog, xSin, zSin, pSin,mAttr, iterations, fourier ) {
+
 	if ( mirrorGeoBuf !== undefined ) {
 		scene.remove( mirrorGeoBuf );
 		//mirrorGeo.geometry.dispose();
@@ -477,8 +615,11 @@ function init() {
 
 
 	// initialize objects
-	objMaterial = getMaterial('lambert', 'rgb(255, 0, 0)');
-	mirrorObjMaterial =  getMaterial('lambert', 'rgb(0, 255, 0)');
+	// objMaterial = getMaterial('lambert', 'rgb(255, 0, 0)');
+	// mirrorObjMaterial =  getMaterial('lambert', 'rgb(0, 255, 0)');
+
+	objMaterial = getCustomMaterial(); /// Custom shader mtl
+	mirrorObjMaterial = getCustomMaterial(); /// Custom shader mtl
 
 	addGeo(objMaterial, false, xSin, zSin, pSin, mAttr, iterations, fourier)
 
@@ -865,10 +1006,12 @@ function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegmen
 
 			// faces
 			if (helper === 1){
+
 				indices.push( a, b, d );
 				geometry.faces.push( new THREE.Face3(  a, b, d ) );
 
 				indices.push( b, c, d );
+
 				geometry.faces.push( new THREE.Face3(  b, c, d ) );
 			}else{
 				indices.push( d, b, a );
@@ -882,6 +1025,7 @@ function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegmen
 
 	geometry.computeFaceNormals();
 	geometry.computeVertexNormals();
+
 	return geometry
 }
 
@@ -909,7 +1053,7 @@ function getGeometry(type, size, material, xSin, zSin, pSin, tog, helper, mAttr,
 
 		case 'myCylinder':
 			nLayers = 600;
-			nSegments = 200;
+			nSegments = 300;
 			height = 300;
 			geometry = ColumnGeometry(20, 20, height, nSegments, nLayers, 0, 2* Math.PI, xSin, zSin, pSin, tog, helper, mAttr, iterations, fourier );
 
