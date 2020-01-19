@@ -5,21 +5,21 @@
 
 /* border before any enabled/disabled */
 .dg .cr.boolean {
-    border-left: 1px solid rgb(133, 121, 127);
+    border-left: 3px solid rgb(133, 121, 127);
 }
 
 
 /* border before any slider */
 .dg .cr.number {
-    border-left: 1px solid rgb(133, 121, 127);
+    border-left: 3px solid rgb(133, 121, 127);
 }
 
 .dg .cr.color {
-    border-left: 1px solid
+    border-left: 3px solid rgb(133, 121, 127);
 }
 
 .dg .cr.function {
-    border-left: 1px solid rgb(133, 121, 127);
+    border-left: 3px solid rgb(133, 121, 127);
 }
 
 .dg .cr.number input[type=text] {
@@ -27,12 +27,12 @@
 }
 
 .dg .cr.string {
-    border-left: 1px rgb(133, 121, 127);
+    border-left: 3px rgb(133, 121, 127);
 }
 
 .dg .cr {
     clear: both;
-    padding-left: 0px;
+    padding-left: 2px;
     height: 27px;
     overflow: hidden
 }
