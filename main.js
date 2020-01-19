@@ -32,6 +32,122 @@ var mAttr =new function() {
 
 mirrorTog = false;
 
+	// /// ** bufferGeometry
+	// var bufferGeometry = new THREE.BufferGeometry().fromGeometry( geometry );
+
+	// var vertexDisplacement = new Float32Array( bufferGeometry.attributes.position.count);
+	// for (var i = 0; i < vertexDisplacement.length; i += 1){
+	// 	vertexDisplacement[i] = Math.sin(i);
+	// }
+	// bufferGeometry.computeFaceNormals();
+	// bufferGeometry.computeVertexNormals();
+	// /// ** 
+
+function vertexShader() {
+	return `
+	varying vec3 world_pos;
+	varying vec3 normalInterp;
+	varying float frequency;
+
+    void main() {
+	  	vec3 p = position;
+
+		frequency = 1.8; 
+	  	p.x += max( 0.0, abs(sin( p.y * frequency )) * 1.0 - 0.4);
+	  	p.z += max( 0.0, abs(cos( p.y * frequency )) * 1.0 - 0.4);
+
+		gl_Position = projectionMatrix * modelViewMatrix * vec4( p, 1.0 );
+		  
+		world_pos = p; 
+		normalInterp = normal;
+    }
+  `
+}
+
+function fragmentShader() {
+	return `
+	precision mediump float; // set float to medium precision
+
+	uniform vec3 lightPos;
+	uniform sampler2D texture1;
+
+	varying vec3 world_pos;
+	varying vec3 normalInterp;
+	varying float frequency;
+
+	const vec3 ambientColor = vec3(0.870, 0.831, 0.721);
+	const vec3 diffuseColor = vec3(0.870, 0.831, 0.721);
+	const vec3 specColor = vec3(0.870, 0.831, 0.721);
+
+	vec3 getPosNormalized(){
+		float x = world_pos.x / 80.0 ;
+		float y = world_pos.y / 300. + 1. ;
+		float z = world_pos.z / 80.0 ;
+		return vec3(x, y, z);
+	}
+
+	vec2 getZylindricalUvs(){
+		vec3 pos_n = getPosNormalized();
+
+		float a = atan(pos_n.x, -pos_n.z) /3.14;
+        float us = ((a + 1.)) * 0.5;  // from 0 to 1
+		float vs = pos_n.y * 1.;          // from 0 to 1
+		
+		return vec2(us, vs);
+	}
+
+	void main() {
+
+		//calculate uvs
+		vec2 vUv = getZylindricalUvs();
+
+		// ambient term
+		vec3 ambient = ambientColor; 
+
+		// look up texture
+		highp vec2 tex2 = vec2(vUv.x, vUv.y);
+		vec4 texColor = texture2D(texture1, tex2);
+		
+		// diffuse term
+		vec3 normal = normalize(normalInterp); 
+		vec3 light = normalize(lightPos - world_pos);
+		float lambert = max(0.0, -dot(normal,light));
+		vec3 diffuse = diffuseColor * lambert; // diffuse term
+
+		// fake occclusion
+		float occlusion = 1.0 - 0.3 * sin( (world_pos.y+ 1.) * frequency * 2.) ;
+
+		// fake specular
+		float specular = 1.0 * sin( (world_pos.y -2. ) * frequency * 2.) * max(0., pow(-dot(normal,light), 15.0) ) ;
+
+		// vec3 color = ambient * 0.35 - 0.1*occlusion + diffuse * 0.9 * occlusion + specular * 0.3; 
+
+		vec3 color = texColor.xyz;
+
+
+
+	    gl_FragColor = vec4(color , 1.0);
+	}
+`
+}
+
+
+function getCustomMaterial(){
+	uniforms = {
+	lightPos : {type: 'vec3', value: [100.0, 10.1, -10.1]},
+	// new THREE.TextureLoader().load()
+	texture1: { type: 't', value:  THREE.ImageUtils.loadTexture( '/assets/textures/checkerboard.jpg' ) } //concrete_texture
+	}
+	selectedMaterial = new THREE.ShaderMaterial({
+		side: THREE.DoubleSide,
+		uniforms: uniforms,
+		fragmentShader: fragmentShader(),
+		vertexShader: vertexShader(),
+	})
+	return selectedMaterial;
+}
+
+
 function addGeo(objMaterial, tog, xSin, zSin, pSin, mAttr ) {
 	if ( geo !== undefined ) {
 		scene.remove( geoBuf );
@@ -48,6 +164,7 @@ function addGeo(objMaterial, tog, xSin, zSin, pSin, mAttr ) {
 
 	scene.add(geoBuf);	
 }
+
 
 function addMirrorGeo(mirrorObjMaterial, tog, xSin, zSin, pSin,mAttr ) {
 	if ( mirrorGeoBuf !== undefined ) {
@@ -352,8 +469,11 @@ function init() {
 
 
 	// initialize objects
-	objMaterial = getMaterial('lambert', 'rgb(255, 0, 0)');
-	mirrorObjMaterial =  getMaterial('lambert', 'rgb(0, 255, 0)');
+	// objMaterial = getMaterial('lambert', 'rgb(255, 0, 0)');
+	// mirrorObjMaterial =  getMaterial('lambert', 'rgb(0, 255, 0)');
+
+	objMaterial = getCustomMaterial(); /// Custom shader mtl
+	mirrorObjMaterial = getCustomMaterial(); /// Custom shader mtl
 
 	addGeo(objMaterial, false, xSin, zSin, pSin, mAttr)
 
@@ -742,6 +862,7 @@ function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegmen
 
 	geometry.computeFaceNormals();
 	geometry.computeVertexNormals();
+
 	return geometry
 }
 
@@ -769,7 +890,7 @@ function getGeometry(type, size, material, xSin,zSin, pSin, tog, helper, mAttr) 
 
 		case 'myCylinder':
 			nLayers = 600;
-			nSegments = 200;
+			nSegments = 300;
 			height = 300;
 			geometry = ColumnGeometry(20, 20, height, nSegments, nLayers, 0, 2* Math.PI, xSin, zSin, pSin, tog, helper, mAttr );
 			return geometry;
