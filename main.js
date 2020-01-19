@@ -53,8 +53,8 @@ function vertexShader() {
 	  	vec3 p = position;
 
 		frequency = 1.8; 
-	  	p.x += max( 0.0, abs(sin( p.y * frequency )) * 1.0 - 0.4);
-	  	p.z += max( 0.0, abs(cos( p.y * frequency )) * 1.0 - 0.4);
+	  	p.x += max( 0.0, abs(sin( p.y * frequency )) * 1. );
+	  	p.z += max( 0.0, abs(cos( p.y * frequency )) * 1. );
 
 		gl_Position = projectionMatrix * modelViewMatrix * vec4( p, 1.0 );
 		  
@@ -68,16 +68,19 @@ function fragmentShader() {
 	return `
 	precision mediump float; // set float to medium precision
 
-	uniform vec3 lightPos;
+	uniform vec3 lightPos1;
+	uniform vec3 lightPos2;
+	uniform vec3 lightPos3;
+
 	uniform sampler2D texture1;
 
 	varying vec3 world_pos;
 	varying vec3 normalInterp;
 	varying float frequency;
 
-	const vec3 ambientColor = vec3(0.870, 0.831, 0.721);
-	const vec3 diffuseColor = vec3(0.870, 0.831, 0.721);
-	const vec3 specColor = vec3(0.870, 0.831, 0.721);
+	// const vec3 ambientColor = vec3(0.870, 0.831, 0.721);
+	// const vec3 diffuseColor = vec3(0.870, 0.831, 0.721);
+	// const vec3 specColor = vec3(0.870, 0.831, 0.721);
 
 	vec3 getPosNormalized(){
 		float x = world_pos.x / 80.0 ;
@@ -90,8 +93,8 @@ function fragmentShader() {
 		vec3 pos_n = getPosNormalized();
 
 		float a = atan(pos_n.x, -pos_n.z) /3.14;
-        float us = ((a + 1.)) * 0.5;  // from 0 to 1
-		float vs = pos_n.y * 1.;          // from 0 to 1
+        float us = mod( ((a + 1.)) * 0.5 * 4.0, 1.0);  // from 0 to 1
+		float vs = mod( pos_n.y * 12., 1.0) ;          // from 0 to 1
 		
 		return vec2(us, vs);
 	}
@@ -101,42 +104,57 @@ function fragmentShader() {
 		//calculate uvs
 		vec2 vUv = getZylindricalUvs();
 
-		// ambient term
-		vec3 ambient = ambientColor; 
-
 		// look up texture
 		highp vec2 tex2 = vec2(vUv.x, vUv.y);
 		vec4 texColor = texture2D(texture1, tex2);
+
+		//normal and light direction
+		vec3 normal = normalize(normalInterp); 
+		vec3 light1 = normalize(lightPos1 - world_pos);
+		vec3 light2 = normalize(lightPos2 - world_pos);
+		vec3 light3 = normalize(lightPos3 - world_pos);
+		float lambert = max(0.0, dot(normal,light1)) 
+					  + max(0.0, dot(normal,light2)) 
+					  + max(0.0, dot(normal,light3) + 0.05);
+
+		// ambient term
+		vec3 ambient = texColor.xyz; 
 		
 		// diffuse term
-		vec3 normal = normalize(normalInterp); 
-		vec3 light = normalize(lightPos - world_pos);
-		float lambert = max(0.0, -dot(normal,light));
-		vec3 diffuse = diffuseColor * lambert; // diffuse term
+		vec3 diffuse = texColor.xyz * lambert; // diffuse term
 
-		// fake occclusion
-		float occlusion = 1.0 - 0.3 * sin( (world_pos.y+ 1.) * frequency * 2.) ;
+		
+		// (fake) specular term
+		vec3 eye = normalize(-world_pos);
+		vec3 r1 = 2.0*lambert* normal - light1;
+		vec3 r2 = 2.0*lambert* normal - light2;
+		vec3 r3 = 2.0*lambert* normal - light3;
 
-		// fake specular
-		float specular = 1.0 * sin( (world_pos.y -2. ) * frequency * 2.) * max(0., pow(-dot(normal,light), 15.0) ) ;
+		float spec_intensity = sin( (world_pos.y -2. ) * frequency * 2.) 
+							  *(  pow(max(0.0, -dot(eye, r1) - 0.4), 3.0) 
+								+ pow(max(0.0, -dot(eye, r2) - 0.4), 3.0) );
+								// + pow(max(0.0, -dot(eye, r3)), 3.0)  );
 
-		// vec3 color = ambient * 0.35 - 0.1*occlusion + diffuse * 0.9 * occlusion + specular * 0.3; 
+		vec3 specular = texColor.xyz * spec_intensity;
 
-		vec3 color = texColor.xyz;
+		// (fake) occclusion
+		float occlusion = 1.0 - 0.4 *  sin( (world_pos.y+ 1.5) * frequency * 2.) ;
 
-
+		vec3 color = 0.65 * ambient - 0.1 * occlusion 
+				   + 0.65 * diffuse  - 0.1 * occlusion
+				   + specular * 0.03; 
 
 	    gl_FragColor = vec4(color , 1.0);
 	}
 `
 }
 
-
 function getCustomMaterial(){
 	uniforms = {
-	lightPos : {type: 'vec3', value: [100.0, 10.1, -10.1]},
-	// new THREE.TextureLoader().load()
-	texture1: { type: 't', value:  THREE.ImageUtils.loadTexture( '/assets/textures/checkerboard.jpg' ) } //concrete_texture
+	lightPos1 : {type: 'vec3', value: [-300, 200, 40]},
+	lightPos2 : {type: 'vec3', value: [300, 200, 40]},
+	lightPos3 : {type: 'vec3', value: [0, 100, 30]},
+	texture1: { type: 't', value:  THREE.ImageUtils.loadTexture( '/assets/textures/AS2_concrete_13.jpg' ) } //concrete_texture
 	}
 	selectedMaterial = new THREE.ShaderMaterial({
 		side: THREE.DoubleSide,
