@@ -928,9 +928,11 @@ function slice() {
 	if (boolSlice === true){
 		sliceGeometry = new THREE.Geometry();
 		var sliceMaterial = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 1 } );
+		vertex1 = new THREE.Vector3( helperDataSt[(layerIndex)*(nSegments)+1].x*5, helperDataSt[(layerIndex)*(nSegments)+1].z*5,0)
 		for (var ka = (layerIndex)*(nSegments)+1; ka < (layerIndex+1)*(nSegments); ka++) {
 			sliceGeometry.vertices.push( new THREE.Vector3( helperDataSt[ka].x*5 , helperDataSt[ka].z*5 , 0 ));
 		}
+		sliceGeometry.vertices.push(vertex1);
 		var sliceLine = new THREE.Line( sliceGeometry, sliceMaterial );
 		squareSize = 460;
 		sliceLine.rotation.z = Math.PI*0.5;
