@@ -607,8 +607,8 @@ function init() {
 	// initialize objects
 	concreteTog = false;
 
-	objMaterial = getMaterial('lambert', 'rgb(255, 0, 0)');
-	mirrorObjMaterial =  getMaterial('lambert', 'rgb(0, 255, 0)');
+	objMaterial = getMaterial('lambert', 'rgb( 198, 69, 33)');
+	mirrorObjMaterial =  getMaterial('lambert', 'rgb(240, 240, 255)');
 	
 	addGeo(objMaterial, false, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
 
@@ -912,7 +912,7 @@ function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegmen
 
 						//SinFourier(val,freq,amp,phase,ite)
 
-						pSinFourier = SinFourier(pos_p , pFreq, pAmp, 0.5 * mag_z, fourier.ite);
+						pSinFourier = SinFourier(pos_p , pFreq, pAmp, pPhase, fourier.ite);
 						magnitude = pSinFourier;
 					}
 

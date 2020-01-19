@@ -1,0 +1,79 @@
+.dg.main .close-button {
+    
+    background-color: rgb(0, 0, 0);
+  }
+
+/* border before any enabled/disabled */
+.dg .cr.boolean {
+    border-left: 1px solid rgb(133, 121, 127);
+}
+
+
+/* border before any slider */
+.dg .cr.number {
+    border-left: 1px solid rgb(133, 121, 127);
+}
+
+.dg .cr.color {
+    border-left: 1px solid
+}
+
+.dg .cr.function {
+    border-left: 1px solid rgb(133, 121, 127);
+}
+
+.dg .cr.number input[type=text] {
+    color: rgb(133, 121, 127);
+}
+
+.dg .cr.string {
+    border-left: 1px rgb(133, 121, 127);
+}
+
+.dg .cr {
+    clear: both;
+    padding-left: 0px;
+    height: 27px;
+    overflow: hidden
+}
+
+/* slider color */
+.dg .c .slider-fg {
+    background: rgb(133, 121, 127);
+    max-width: 100%
+}
+
+.dg .c .slider:hover .slider-fg {
+    background: rgb(133, 121, 127);
+}
+
+
+/* background of input text */
+.dg .c input[type=text] {
+    background: #303030;
+    outline: none;
+}
+
+.dg .cr.number input[type=text] {
+    color: rgb(133, 121, 127);
+}
+
+.dg .c input[type=text]:focus {
+    background: #494949;
+    color: #fff
+}
+
+.dg.a { margin-right:20px !important; }
+
+.dg li:not(.folder) {
+    cursor: auto;
+    height: 27px;
+    line-height: 27px;
+    padding: 0 0px 0 0px
+}
+
+.dg li.folder {
+    padding: 0;
+    border-left: 0px solid transparent
+}
+
