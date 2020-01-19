@@ -43,17 +43,6 @@ boolSlice = false;
 concreteTog = false;
 
 
-// /// ** bufferGeometry
-// var bufferGeometry = new THREE.BufferGeometry().fromGeometry( geometry );
-
-// var vertexDisplacement = new Float32Array( bufferGeometry.attributes.position.count);
-// for (var i = 0; i < vertexDisplacement.length; i += 1){
-// 	vertexDisplacement[i] = Math.sin(i);
-// }
-// bufferGeometry.computeFaceNormals();
-// bufferGeometry.computeVertexNormals();
-// /// ** 
-
 function vertexShader() {
 	return `
 	varying vec3 world_pos;
@@ -63,9 +52,16 @@ function vertexShader() {
     void main() {
 	  	vec3 p = position;
 
-		frequency = 1.8; 
-	  	p.x += max( 0.0, abs(sin( p.y * frequency )) * 1. );
-	  	p.z += max( 0.0, abs(cos( p.y * frequency )) * 1. );
+		  frequency = 1.8; 
+		  float top_thickness = 0.83;
+  
+		  if (abs(position.y) > 0.3){
+			  p.x += max( 0.0, abs(sin( p.y * frequency )) * 1. );
+			  p.z += max( 0.0, abs(cos( p.y * frequency )) * 1. );
+		  } else {
+			  p.x *= top_thickness;
+			  p.z *= top_thickness;
+		  }
 
 		gl_Position = projectionMatrix * modelViewMatrix * vec4( p, 1.0 );
 		  
