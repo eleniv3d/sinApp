@@ -44,30 +44,30 @@ function addGeo(objMaterial, tog, xSin, zSin, pSin, mAttr ) {
 	geo = new THREE.Mesh(columnGeo, objMaterial);
 
 	//find bounding box for Ioanna
-	test = geo.geometry.vertices;
-	xlist = []
-	ylist = []
-	zlist = []
+	// test = geo.geometry.vertices;
+	// xlist = []
+	// ylist = []
+	// zlist = []
 
-	for (i = 0; i < test.length; i++) {
-		xlist.push( test[i].x )
-		ylist.push( test[i].y )
-		zlist.push (test[i].z)
-	}
-	xmax = Math.max.apply(null,xlist);
-	console.log(xmax);
-	xmin = Math.min.apply(null,xlist);
-	console.log(xmin);
+	// for (i = 0; i < test.length; i++) {
+	// 	xlist.push( test[i].x )
+	// 	ylist.push( test[i].y )
+	// 	zlist.push (test[i].z)
+	// }
+	// xmax = Math.max.apply(null,xlist);
+	// console.log(xmax);
+	// xmin = Math.min.apply(null,xlist);
+	// console.log(xmin);
 
-	ymax = Math.max.apply(null,ylist);
-	console.log(ymax);
-	ymin = Math.min.apply(null,ylist);
-	console.log(ymin);
+	// ymax = Math.max.apply(null,ylist);
+	// console.log(ymax);
+	// ymin = Math.min.apply(null,ylist);
+	// console.log(ymin);
 
-	zmax = Math.max.apply(null,zlist);
-	console.log(zmax);
-	zmin = Math.min.apply(null,zlist);
-	console.log(zmin);
+	// zmax = Math.max.apply(null,zlist);
+	// console.log(zmax);
+	// zmin = Math.min.apply(null,zlist);
+	// console.log(zmin);
 
 	geoBuf = new THREE.Mesh(columngeoBuf, objMaterial);
 
@@ -795,13 +795,20 @@ function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegmen
 			var d = indexArray[ y ][ (x + 1)%segments ];
 
 			// faces
+			if (helper === 1){
+				indices.push( a, b, d );
+				geometry.faces.push( new THREE.Face3(  a, b, d ) );
 
-			indices.push( a, b, d );
-			geometry.faces.push( new THREE.Face3(  d, b, a ) );
-			indices.push( b, c, d );
-			geometry.faces.push( new THREE.Face3(  d, c, b ) );
+				indices.push( b, c, d );
+				geometry.faces.push( new THREE.Face3(  b, c, d ) );
+			}else{
+				indices.push( d, b, a );
+				geometry.faces.push( new THREE.Face3(  d, b, a ) );
+
+				indices.push( d, c, b );
+				geometry.faces.push( new THREE.Face3(  d, c, b ) );
+			}
 		}
-
 	}
 
 	geometry.computeFaceNormals();
