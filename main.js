@@ -869,11 +869,19 @@ function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegmen
 			var d = indexArray[ y ][ (x + 1)%segments ];
 
 			// faces
+			if (helper === 1){
+				indices.push( d, b, a );
+				geometry.faces.push( new THREE.Face3(  a, b, d ) );
 
-			indices.push( a, b, d );
-			geometry.faces.push( new THREE.Face3(  d, b, a ) );
-			indices.push( b, c, d );
-			geometry.faces.push( new THREE.Face3(  d, c, b ) );
+				indices.push( d, c, b );
+				geometry.faces.push( new THREE.Face3(  b, c, d ) );
+			}else{
+				indices.push( d, b, a );
+				geometry.faces.push( new THREE.Face3(  d, b, a ) );
+
+				indices.push( d, c, b );
+				geometry.faces.push( new THREE.Face3(  d, c, b ) );
+			}
 		}
 
 	}
