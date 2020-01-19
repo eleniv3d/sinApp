@@ -28,21 +28,25 @@ var pSin = new function() {
 }
 
 var mAttr =new function() {
-	this.mType = 0;
+	this.mType = "parallel to xx' axis" ;
 	this.distance = 0.0;
 	this.mm = 0.0;
 	this.mc = 0.0;
 }
 
+var fourier = new function(){
+	this.bool = "false";
+}
+
 mirrorTog = false;
 boolSlice = false;
 
-function addGeo(objMaterial, tog, xSin, zSin, pSin, mAttr, iterations ) {
+function addGeo(objMaterial, tog, xSin, zSin, pSin, mAttr, iterations, fourier ) {
 	if ( geo !== undefined ) {
 		scene.remove( geoBuf );
 		//geo.geometry.dispose();
 	}
-	columnGeo = getGeometry('myCylinder', 5, objMaterial, xSin, zSin, pSin, tog, 0, mAttr, iterations);
+	columnGeo = getGeometry('myCylinder', 5, objMaterial, xSin, zSin, pSin, tog, 0, mAttr, iterations, fourier);
 	columngeoBuf = new THREE.BufferGeometry().fromGeometry( columnGeo );
 
 	geo = new THREE.Mesh(columnGeo, objMaterial);
@@ -81,12 +85,12 @@ function addGeo(objMaterial, tog, xSin, zSin, pSin, mAttr, iterations ) {
 	scene.add(geoBuf);	
 }
 
-function addMirrorGeo(mirrorObjMaterial, tog, xSin, zSin, pSin,mAttr, iterations ) {
+function addMirrorGeo(mirrorObjMaterial, tog, xSin, zSin, pSin,mAttr, iterations, fourier ) {
 	if ( mirrorGeoBuf !== undefined ) {
 		scene.remove( mirrorGeoBuf );
 		//mirrorGeo.geometry.dispose();
 	}
-	mirrorcolumnGeo = getGeometry('myCylinder', 5, mirrorObjMaterial, xSin, zSin, pSin, tog, 1, mAttr, iterations);
+	mirrorcolumnGeo = getGeometry('myCylinder', 5, mirrorObjMaterial, xSin, zSin, pSin, tog, 1, mAttr, iterations, fourier);
 	mirrorcolumnGeoBuf = new THREE.BufferGeometry().fromGeometry( mirrorcolumnGeo );
 
 	mirrorGeo = new THREE.Mesh(mirrorcolumnGeo,  mirrorObjMaterial);
@@ -159,11 +163,18 @@ function addMirrorAxis() {
 	var axisMaterial = new THREE.LineDashedMaterial( {color: 0xffffff, linewidth: 1, scale: 10, dashSize: 3, gapSize: 8 } );
 	var axisGeometry = new THREE.Geometry();
 
-	if (mAttr.mType === 0){
+	if (mAttr.mType === "parallel to xx' axis" ){
+		mirrorType = 0;
+	}else{
+		mirrorType = 1;
+	}
+
+
+	if (mirrorType === 0){
 		axisGeometry.vertices.push(new THREE.Vector3( -w + margin, -h + margin + 0.5* squareSize + ( 5*mAttr.distance), 0) );
 		axisGeometry.vertices.push(new THREE.Vector3( -w + margin + squareSize , -h + margin + 0.5* squareSize + (5*mAttr.distance), 0) );
 		axisline = new THREE.Line( axisGeometry, axisMaterial );
-	}else if(mAttr.mType === 1){
+	}else if(mirrorType === 1){
 		axisGeometry.vertices.push(new THREE.Vector3( -w + margin + 0.5* squareSize - ( 5*mAttr.distance), -h + margin, 0) );
 		axisGeometry.vertices.push(new THREE.Vector3( -w + margin + 0.5* squareSize - ( 5*mAttr.distance) , -h + margin + squareSize, 0) );
 		axisline = new THREE.Line( axisGeometry, axisMaterial );
@@ -182,10 +193,8 @@ function addMirrorAxis() {
 	sceneOrtho.add(axisline);
 }
 
-
 function init() {
 
-	
 	var gui = new dat.GUI();
 	var gui2 = new dat.GUI(); 
 	scene = new THREE.Scene();
@@ -224,9 +233,9 @@ function init() {
 	var folder2 = gui.addFolder('iterations');
 	folder2.add( iterations, 'number', 1, 4, 1).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin,mAttr, iterations)
+		addGeo(objMaterial, true, xSin, zSin, pSin,mAttr, iterations, fourier)
 		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations )
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
 			if (boolSlice === true){
 				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 );
 			}
@@ -242,9 +251,9 @@ function init() {
 	var folder3 = gui.addFolder('xSin');
 	folder3.add(xSin, 'xfrequency', 0.1, 10).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations)
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier)
 		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations )
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
 			if (boolSlice === true){
 				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 );
 			}
@@ -254,6 +263,7 @@ function init() {
 		}
 
 	} );
+
 	folder3.add(xSin, 'xamplitude', 0.1, 10);
 	folder3.add(xSin, 'xphase', 0, 0.5 * Math.PI);
 	folder3.add(xSin, 'xoffset', 0, 3); //0.5 *z/nLayers
@@ -263,9 +273,9 @@ function init() {
 	var folder4 = gui.addFolder('zSin');
 	folder4.add(zSin, 'zfrequency', 0.0, 10).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations)
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier)
 		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations )
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
 			if (boolSlice === true){
 				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
 			}
@@ -277,9 +287,9 @@ function init() {
 	} );
 	folder4.add(zSin, 'zamplitude', 0.0, 10).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations)
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier)
 		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations )
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
 			if (boolSlice === true){
 				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
 			}
@@ -291,9 +301,9 @@ function init() {
 	} );
 	folder4.add(zSin, 'zphase', 0.0, 2 * Math.PI).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations)
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier)
 		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin,mAttr, iterations )
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin,mAttr, iterations, fourier )
 			if (boolSlice === true){
 				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
 			}
@@ -305,9 +315,9 @@ function init() {
 	} );
 	folder4.add(zSin, 'zoffset', 0.0, 3).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations)
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier)
 		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations )
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
 			if (boolSlice === true){
 				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00,  1 )
 			}
@@ -323,9 +333,9 @@ function init() {
 	var folder5 = gui.addFolder('pSin');
 	folder5.add(pSin, 'pfrequency', 1, 10,1).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations)
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier)
 		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations )
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
 			if (boolSlice === true){
 				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
 			}
@@ -337,9 +347,9 @@ function init() {
 	} );
 	folder5.add(pSin, 'pamplitude', 0.1, 10).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations)
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier)
 		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations )
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
 			if (boolSlice === true){
 				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
 			}
@@ -351,9 +361,9 @@ function init() {
 	} );
 	folder5.add(pSin, 'pphase', 0, Math.PI).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations)
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier)
 		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations )
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
 			if (boolSlice === true){
 				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
 			}
@@ -363,11 +373,11 @@ function init() {
 		}
 
 	} );
-	folder5.add(pSin, 'poffset', 0, 3).onChange( function () {
+	folder5.add(pSin, 'poffset', 0, 10, 0.1).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations)
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier)
 		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations )
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
 			if (boolSlice === true){
 				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
 			}
@@ -380,12 +390,30 @@ function init() {
 
 	folder5.open();
 
-	var folder6 = gui.addFolder('mAttr');
-	folder6.add(mAttr, 'mType', 0, 2, 1).onChange( function () {
+	var folderf = gui.addFolder('fourier');
+	folderf.add(fourier, 'bool', ["true", "false"]).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations)
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier)
 		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations )
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
+			if (boolSlice === true){
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
+				addMirrorAxis()
+			}
+		}
+		if (boolSlice === true){
+			addSlice(geo, sliceLine, sliceGeometry, 0xff0000, 0)
+		}
+	} );
+
+	folderf.open();
+
+	var folder6 = gui.addFolder('mAttr');
+	folder6.add(mAttr, 'mType', ["parallel to xx' axis", "parallel to yy' axis"]).onChange( function () {
+
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier)
+		if (mirrorTog === true){
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
 			if (boolSlice === true){
 				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
 				addMirrorAxis()
@@ -398,9 +426,9 @@ function init() {
 
 	folder6.add(mAttr, 'distance', -5, 5, 1).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations)
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier)
 		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations )
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
 			if (boolSlice === true){
 				addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
 				addMirrorAxis()
@@ -452,7 +480,7 @@ function init() {
 	objMaterial = getMaterial('lambert', 'rgb(255, 0, 0)');
 	mirrorObjMaterial =  getMaterial('lambert', 'rgb(0, 255, 0)');
 
-	addGeo(objMaterial, false, xSin, zSin, pSin, mAttr, iterations)
+	addGeo(objMaterial, false, xSin, zSin, pSin, mAttr, iterations, fourier)
 
 	var lightLeft = getSpotLight(1, 'rgb(255, 220, 180)');
 	var lightRight = getSpotLight(1, 'rgb(255, 220, 180)');
@@ -658,7 +686,7 @@ function SinFourier(val, freq, amp, phase, ite){
     return pos_y
 }
 
-function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegments, thetaStart, thetaLength, xSin, zSin, pSin, tog, helper, mAttr ) {
+function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegments, thetaStart, thetaLength, xSin, zSin, pSin, tog, helper, mAttr, iterations, fourier ) {
 
 	geometry = new THREE.Geometry();
 	heightSegments = Math.floor( heightSegments ) ;
@@ -724,15 +752,15 @@ function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegmen
 					zFreq = zSin.zfrequency;
 					zAmp = zSin.zamplitude;
 					zPhase = zSin.zphase;
-					zOffset = 5 * vertex.y / heightSegments;
+					zOffset = zSin.zoffset * vertex.y / heightSegments;
 					zFunction = new SinusFunction( zFreq, zAmp, zPhase, zOffset);
 					pos_z = (currentHeight/heightSegments) * 2 * Math.PI;
 					mag_z = zFunction.getValue(pos_z);
 
-					xFreq = 2;
-					xAmp = 0.5;
-					xPhase = 0.5*Math.PI;
-					xOffset = 0.5 * vertex.y / heightSegments;
+					xFreq = xSin.xfrequency;
+					xAmp = xSin.xamplitude;
+					xPhase = xSin.xphase;
+					xOffset = xSin.xoffset * vertex.y / heightSegments;
 					xFunction = new SinusFunction( xFreq, xAmp, xPhase, xOffset);
 					pos_x = (currentHeight/heightSegments) *2*Math.PI;
 					mag_x = xFunction.getValue(pos_z);
@@ -740,18 +768,20 @@ function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegmen
 					pFreq = pSin.pfrequency;
 					pAmp = pSin.pamplitude;
 					pPhase = 0.5 * mag_z;
-					//pPhase = 5 ;
-					pOffset = pSin.poffset;
+
+					pOffset = pSin.poffset
 					pFunction = new SinusFunction( pFreq, pAmp, pPhase, pOffset);
 					pos_p = (index/segments)*2*Math.PI
 					mag_p = pFunction.getValue(pos_p);
 
 					magnitude = mag_p
-					fourier = false;
-					if (fourier){
+					if (fourier.bool === "true"){
 
 						//SinFourier(val,freq,amp,phase,ite)
-						pSinFourier = SinFourier(pos_p ,5, 15*mag_z, 1*mag_o, 3) + 3
+						z_fac = 1 + ( (vertex.y * 0.8) **2 ) *0.000006
+						mag_z = Math.sin(3 * pos_z + 0.5 * Math.PI) * 0.5 + 0.2 + 0.0 * vertex.y / heightSegments;
+						mag_o = Math.sin(1 * pos_z * z_fac + 0.0*Math.PI) * 1.0 + 10.0 * vertex.y / heightSegments;
+						pSinFourier = SinFourier(pos_p , 5, 15 * mag_z, mag_o, 3) + 3
 						magnitude = pSinFourier
 					}
 
@@ -784,7 +814,12 @@ function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegmen
 
 			function mynewFunction(vertex) {
 				
-				mirrorType = mAttr.mType ;
+				if (mAttr.mType === "parallel to xx' axis" ){
+					mirrorType = 0;
+				}else{
+					mirrorType = 1;
+				}
+
 				d = mAttr.distance ;
 				m = mAttr.mm ;
 				c = mAttr.mc ;
@@ -863,7 +898,7 @@ class SinusFunction{
 	}
 }
 
-function getGeometry(type, size, material, xSin,zSin, pSin, tog, helper, mAttr, iterations) {
+function getGeometry(type, size, material, xSin, zSin, pSin, tog, helper, mAttr, iterations, fourier) {
 	var geometry;
 
 	switch (type) {
@@ -876,7 +911,8 @@ function getGeometry(type, size, material, xSin,zSin, pSin, tog, helper, mAttr, 
 			nLayers = 600;
 			nSegments = 200;
 			height = 300;
-			geometry = ColumnGeometry(20, 20, height, nSegments, nLayers, 0, 2* Math.PI, xSin, zSin, pSin, tog, helper, mAttr );
+			geometry = ColumnGeometry(20, 20, height, nSegments, nLayers, 0, 2* Math.PI, xSin, zSin, pSin, tog, helper, mAttr, iterations, fourier );
+
 			return geometry;
 	}
 
@@ -1005,7 +1041,7 @@ function mirror() {
 	mirrorTog = !(mirrorTog);
 
 	if (mirrorTog === true){
-		addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations )
+		addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier )
 		if (boolSlice === true){
 			addSlice(mirrorGeo, sliceLine, sliceGeometry, 0x00ff00, 1 )
 			addMirrorAxis()
