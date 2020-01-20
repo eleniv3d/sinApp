@@ -15,17 +15,17 @@
 }
 
 .dg .cr.string {
-    border-left: 0px solid rgb(126, 98, 126);
+    border-left: 0px solid rgb(0, 62, 125);
 }
 
 /* slider color */
 .dg .c .slider-fg {
-    background: rgb(126, 98, 126);
+    background: rgb(0, 62, 125);
     max-width: 100%
 }
 
 .dg .c .slider:hover .slider-fg {
-    background: rgb(126, 98, 126);
+    background: rgb(0, 62, 125);
 }
 
 
@@ -37,7 +37,7 @@
 
 /* input text */
 .dg .cr.number input[type=text] {
-    color: rgb(126, 98, 126);
+    color: rgb(255, 255, 255);
 }
 
 /* becomes white when you type */
