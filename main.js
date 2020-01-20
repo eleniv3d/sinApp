@@ -613,7 +613,7 @@ function init() {
 	addGeo(objMaterial, false, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
 
 	//'rgb(255, 220, 180)'
-	col = 'rgb(220, 220, 200)'
+	col = 'rgb(235, 235, 225)'
 	var lightLeft = getSpotLight(1, col);
 	var lightRight = getSpotLight(1, col );
 	var lightBottom = getPointLight(0.33, col );
