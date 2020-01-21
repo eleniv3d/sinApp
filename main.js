@@ -23,7 +23,7 @@ var zSin = new function() {
 var pSin = new function() {
 	this.pfrequency = 0.0;
 	this.pamplitude = 0.0;
-	this.pphase = 0.0;
+	this.pphase = 1.0;
 	this.poffset = 0.0;
 }
 
@@ -259,7 +259,9 @@ function addSlice(ch, sliceLine, sliceGeometry, c, type) {
 
 	helperDataSt = ch.geometry.vertices;
 	horizontalc = horizontalPlane.constant;
-	layerIndex = Math.floor((600 - horizontalc)/5) ;
+
+	layerIndex = Math.floor(600 + horizontalPlane.constant*2);
+	
 	sliceGeometry = new THREE.Geometry();
 	var sliceMaterial = new THREE.LineBasicMaterial( { color: c, linewidth: 1 } );	
 	vertex1 = new THREE.Vector3( helperDataSt[(layerIndex)*(nSegments)+1].x*5, helperDataSt[(layerIndex)*(nSegments)+1].z*5,0)
@@ -371,7 +373,7 @@ function init() {
 	myExporter = new THREE.STLExporter();
 
 	// ***** Clipping planes: *****
-	horizontalPlane = new THREE.Plane( new THREE.Vector3( 0, - 1, 0 ), 0.8 );
+	horizontalPlane = new THREE.Plane( new THREE.Vector3( 0, - 1, 0 ), 0.0 );
 
 	var folder2 = gui.addFolder('iterations');
 	folder2.add( iterations, 'number', 1, 4, 1).onChange( function () {
@@ -411,7 +413,7 @@ function init() {
 	folder3.add(xSin, 'xphase', 0, 0.5 * Math.PI);
 	folder3.add(xSin, 'xoffset', 0, 3); //0.5 *z/nLayers
 
-	folder3.open();
+	//folder3.open();
 
 	var folder4 = gui.addFolder('zSin');
 	folder4.add(zSin, 'zfrequency', 0.0, 10).onChange( function () {
@@ -488,7 +490,7 @@ function init() {
 		}
 
 	} );
-	folder5.add(pSin, 'pamplitude', 0.1, 10).onChange( function () {
+	folder5.add(pSin, 'pamplitude', 0.0, 10).onChange( function () {
 
 		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
 		if (mirrorTog === true){
@@ -502,7 +504,7 @@ function init() {
 		}
 
 	} );
-	folder5.add(pSin, 'pphase', 0, Math.PI).onChange( function () {
+	folder5.add(pSin, 'pphase', 1, 10, 0.1).onChange( function () {
 
 		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
 		if (mirrorTog === true){
@@ -582,7 +584,7 @@ function init() {
 		}
 	} );
 
-	folder6.add(mAttr, 'distance', -5, 5, 1).onChange( function () {
+	folder6.add(mAttr, 'distance', -10, 10, 1).onChange( function () {
 
 		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
 		if (mirrorTog === true){
@@ -909,7 +911,7 @@ function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegmen
 
 					pFreq = pSin.pfrequency;
 					pAmp = pSin.pamplitude;
-					pPhase = 0.5 * mag_z;
+					pPhase = pSin.pphase * mag_z;
 
 					pOffset = pSin.poffset
 					pFunction = new SinusFunction( pFreq, pAmp, pPhase, pOffset);
@@ -1154,7 +1156,8 @@ function slice() {
 	helperDataSt = geo.geometry.vertices;
 	
 	horizontalc = horizontalPlane.constant;
-	layerIndex = Math.floor((300 + horizontalPlane.constant)/5) ;
+
+	layerIndex = Math.floor(600 + horizontalPlane.constant*2) ;
 	console.log(layerIndex);
 	
 	if (boolSlice === true){
