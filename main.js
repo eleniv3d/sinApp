@@ -415,6 +415,67 @@ function init() {
 
 	//folder3.open();
 
+	var folder5 = gui.addFolder('pSin');
+	folder5.add(pSin, 'pfrequency', 0.0, 10,1).onChange( function () {
+
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
+		if (mirrorTog === true){
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
+			if (boolSlice === true){
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 1 )
+			}
+		}
+		if (boolSlice === true){
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 0)
+		}
+
+	} );
+	folder5.add(pSin, 'pamplitude', 0.0, 10).onChange( function () {
+
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
+		if (mirrorTog === true){
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
+			if (boolSlice === true){
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 1 )
+			}
+		}
+		if (boolSlice === true){
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 0)
+		}
+
+	} );
+	folder5.add(pSin, 'pphase', 1, 10, 0.1).onChange( function () {
+
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
+		if (mirrorTog === true){
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
+			if (boolSlice === true){
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 1 )
+			}
+		}
+		if (boolSlice === true){
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 0)
+		}
+
+	} );
+	folder5.add(pSin, 'poffset', 0, 10, 0.1).onChange( function () {
+
+		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
+		if (mirrorTog === true){
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
+			if (boolSlice === true){
+				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 1 )
+			}
+		}
+		if (boolSlice === true){
+			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 0)
+		}
+
+	} );
+
+	folder5.open();
+
+
 	var folder4 = gui.addFolder('zSin');
 	folder4.add(zSin, 'zfrequency', 0.0, 10).onChange( function () {
 
@@ -475,65 +536,7 @@ function init() {
 
 	folder4.open();
 
-	var folder5 = gui.addFolder('pSin');
-	folder5.add(pSin, 'pfrequency', 0.0, 10,1).onChange( function () {
 
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
-		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
-			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 1 )
-			}
-		}
-		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 0)
-		}
-
-	} );
-	folder5.add(pSin, 'pamplitude', 0.0, 10).onChange( function () {
-
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
-		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
-			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 1 )
-			}
-		}
-		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 0)
-		}
-
-	} );
-	folder5.add(pSin, 'pphase', 1, 10, 0.1).onChange( function () {
-
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
-		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
-			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 1 )
-			}
-		}
-		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 0)
-		}
-
-	} );
-	folder5.add(pSin, 'poffset', 0, 10, 0.1).onChange( function () {
-
-		addGeo(objMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog)
-		if (mirrorTog === true){
-			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog )
-			if (boolSlice === true){
-				addSlice(mirrorGeo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 1 )
-			}
-		}
-		if (boolSlice === true){
-			addSlice(geo, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 0)
-		}
-
-	} );
-
-	folder5.open();
 
 	var folderf = gui.addFolder('fourier');
 	folderf.add(fourier, 'bool', ["true", "false"]).onChange( function () {
