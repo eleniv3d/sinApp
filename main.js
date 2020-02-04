@@ -7,9 +7,9 @@ var iterations = new function() {
 }
 
 var xSin = new function() {
-	this.xfrequency = 0.02;
-	this.xamplitude = 0.03;
-	this.xphase = 0.03;
+	this.xfrequency = 0.0;
+	this.xamplitude = 0.0;
+	this.xphase = 0.0;
 	this.xoffset = 0.0;
 }
 
@@ -413,7 +413,7 @@ function init() {
 	folder3.add(xSin, 'xphase', 0, 0.5 * Math.PI);
 	folder3.add(xSin, 'xoffset', 0, 3); //0.5 *z/nLayers
 
-	//folder3.open();
+	folder3.open();
 
 	var folder5 = gui.addFolder('pSin');
 	folder5.add(pSin, 'pfrequency', 0.0, 10,1).onChange( function () {
