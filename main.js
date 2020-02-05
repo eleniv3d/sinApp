@@ -1,5 +1,5 @@
-var scene, camera, myExporter, geoBuf, mirrorGeoBuf, particleSystem, indexArray, nLayers, nSegments, boolRot, boolSlice;
-var box, horizontalPlane, cameraOrtho, sceneOrtho, sliceLine, sliceGeometry, mirrorTog, mirrorType, axisline, columngeoBuf;
+var scene, camera, myExporter, geoBuf, mirrorGeoBuf, particleSystem, indexArray, nLayers, nSegments, boolRot, boolSlice, params, extrudePath;
+var box, horizontalPlane, cameraOrtho, sceneOrtho, sliceLine, sliceGeometry, mirrorTog, mirrorType, axisline, columngeoBuf, path3d;
 var mirrorObjMaterial;
 
 var iterations = new function() {
@@ -39,9 +39,15 @@ var fourier = new function(){
 	this.ite = 1 ;
 }
 
+var params = new function(){
+	this.radiusSegments = 12 ;
+
+};
+
 mirrorTog = false;
 boolSlice = false;
 concreteTog = false;
+extrudeTog = false;
 
 
 function vertexShader() {
@@ -173,6 +179,79 @@ function getCustomMaterial(){
 	return selectedMaterial;
 }
 
+function addTube() {
+
+	extrudeTog = !(extrudeTog);
+
+	// Polyline3 class
+
+	function Polyline3( points ) {
+
+		THREE.Curve.call( this );
+
+		// points is an array of THREE.Vector3()
+		this.points = points;
+
+	}
+
+	Polyline3.prototype = Object.create( THREE.Curve.prototype );
+	Polyline3.prototype.constructor = Polyline3;
+
+	// define the getPoint function for the subClass
+	Polyline3.prototype.getPoint = function ( t ) {
+
+		// t is a float between 0 and 1
+
+		var points = this.points;
+
+		var d = ( points.length - 1 ) * t;
+
+		var index1 = Math.floor( d );
+		var index2 = ( index1 < points.length - 1 ) ? index1 + 1 : index1;
+
+		var pt1 = points[ index1 ];
+		var pt2 = points[ index2 ];
+
+		var weight = d - index1;
+
+		return new THREE.Vector3().copy( pt1 ).lerp( pt2, weight );
+
+	};
+
+	if (extrudeTog === true) {
+		//hide column
+		geoBuf.visible = false;
+		if (mirrorGeoBuf !== undefined){
+			mirrorGeoBuf.visible = false;
+		}
+
+		//make new thing appear
+		helperDataSt = geoBuf.geometry.getAttribute('position').array;
+		newHelper = [];
+
+		for (var i = 0; i < helperDataSt.length; i+=3) {
+			newHelper.push( new THREE.Vector3( helperDataSt[i], helperDataSt[i+1], helperDataSt[i+2] ) )
+		}
+		var extrudePath = new Polyline3( newHelper );
+
+
+		var material = getMaterial('lambert', 'rgb( 255, 255, 255)');
+
+		var tubeGeometry = new THREE.TubeBufferGeometry( extrudePath, newHelper.length*2, 0.3, params.radiusSegments, false );
+
+		path3d = new THREE.Mesh( tubeGeometry, material );
+		scene.add(path3d);
+	
+	}else{
+		//if new thing exists delete it
+		geoBuf.visible = true;
+		if (mirrorGeoBuf !== undefined){
+			mirrorGeoBuf.visible = true;
+		}
+	}
+
+}
+
 
 function addGeo(objMaterial, tog, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog ) {
 
@@ -180,13 +259,10 @@ function addGeo(objMaterial, tog, xSin, zSin, pSin, mAttr, iterations, fourier, 
 		scene.remove( geoBuf );
 	}
 	columngeoBuf = getGeometry('myCylinder', 5, objMaterial, xSin, zSin, pSin, tog, 0, mAttr, iterations, fourier);
-	// columngeoBuf = new THREE.BufferGeometry().fromGeometry( columnGeo );
 
 	if (concreteTog === true){
 		objMaterial = getCustomMaterial(); /// Custom shader mtl
 	}
-
-	//geo = new THREE.Mesh(columnGeo, objMaterial);
 
 	//find bounding box for Shader
 	// test = geo.geometry.vertices;
@@ -364,7 +440,6 @@ function init() {
 	var line = new THREE.Line( squareGeometry, squareMaterial );
 	
 	line.name = 'rec';
-	//sceneOrtho.add(objTest);
 	sceneOrtho.add(line);
 
 	var clock = new THREE.Clock();
@@ -602,7 +677,15 @@ function init() {
 	} );
 
 	folder6.open();
-	test = window.innerHeight - squareSize + 110;
+
+	var folder7 = gui.addFolder('extrusion path');
+	folder7.add(params, 'radiusSegments', 2, 12, 1).onChange( function() {
+		addTube();
+	} );
+
+	folder7.open();
+
+	test = window.innerHeight - squareSize + 113;
 	gui.domElement.style.marginTop = "10px";
 	gui.domElement.style.marginLeft = "1010px";
 	gui2.domElement.style.marginTop = new String(test)+"px";
@@ -675,7 +758,7 @@ function init() {
 	scene.add(cameraGroup);
 
 	// renderer
-	renderer = new THREE.WebGLRenderer();
+	renderer = new THREE.WebGLRenderer({ antialias: true } );
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.shadowMap.enabled = true;
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -751,6 +834,9 @@ function init() {
 
 	var buttonSlice = document.getElementById( 'slice' );
 	buttonSlice.addEventListener( 'click', slice );
+
+	var buttonExtrude = document.getElementById( 'extrudepath');
+	buttonExtrude.addEventListener( 'click', addTube);
 
 	var particleGeo = new THREE.Geometry();
 	var particleMat = new THREE.PointsMaterial( {
