@@ -1224,6 +1224,8 @@ function getMaterial(type, color) {
 function getPointLight(intensity, color) {
 	var light = new THREE.PointLight(color, intensity);
 	light.castShadow = true;
+	light.shadow.mapSize.width = 2048;
+	light.shadow.mapSize.height = 2048;
 
 	return light;
 }
