@@ -162,7 +162,7 @@ function getCustomMaterial(){
 	lightPos1 : {type: 'vec3', value: [-300, 200, 40]},
 	lightPos2 : {type: 'vec3', value: [300, 200, 40]},
 	lightPos3 : {type: 'vec3', value: [0, 100, 30]},
-	texture1: { type: 't', value:  THREE.ImageUtils.loadTexture( '/assets/textures/AS2_concrete_13.jpg' ) } //concrete_texture
+	texture1: { type: 't', value:  THREE.ImageUtils.loadTexture( 'assets/textures/AS2_concrete_13.jpg' ) } //concrete_texture
 	}
 	selectedMaterial = new THREE.ShaderMaterial({
 		side: THREE.DoubleSide,
