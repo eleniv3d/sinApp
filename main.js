@@ -34,6 +34,11 @@ var mAttr =new function() {
 	this.mc = 0.0;
 }
 
+var pAttr = new function() {
+	this.bool = false
+	this.orType = "Crossing Pattern"
+}
+
 var fourier = new function(){
 	this.bool = "false";
 	this.ite = 1 ;
@@ -220,15 +225,16 @@ function addTube() {
 
 	if (extrudeTog === true) {
 		//hide column
-		geoBuf.visible = false;
+		scene.remove(geoBuf);
 		if (mirrorGeoBuf !== undefined){
-			mirrorGeoBuf.visible = false;
+			scene.remove(mirrorGeoBuf);
 		}
 
 		//make new thing appear
 		helperDataSt = geoBuf.geometry.getAttribute('position').array;
 		newHelper = [];
 
+		//console.log(helperDataSt.length);
 		for (var i = 0; i < helperDataSt.length; i+=3) {
 			newHelper.push( new THREE.Vector3( helperDataSt[i], helperDataSt[i+1], helperDataSt[i+2] ) )
 		}
@@ -244,10 +250,16 @@ function addTube() {
 	
 	}else{
 		//if new thing exists delete it
-		geoBuf.visible = true;
-		if (mirrorGeoBuf !== undefined){
-			mirrorGeoBuf.visible = true;
+		if (path3d !== undefined){
+			scene.remove(path3d);
 		}
+
+
+		addGeo(objMaterial, true, xSin, zSin, pSin,mAttr, iterations, fourier, concreteTog);
+		if (mirrorTog === true){
+			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog );
+		}
+
 	}
 
 }
@@ -685,10 +697,44 @@ function init() {
 
 	folder7.open();
 
-	test = window.innerHeight - squareSize + 113;
+	var folder8 = gui.addFolder('material driven ornament');
+
+	folder8.add( pAttr, 'bool', ["true", "false"]).onChange( function () {
+
+		if (pAttr.bool === "true"){
+
+			if ( pAttr.orType === "Faced Based Pattern"){
+				applyFacedBasedPattern()
+			}else if( pAttr.orType === "Curvature Based Pattern"){
+				applyCurvatureBasedPattern()
+			}else{
+				applyCrossingPattern()
+			}
+		}
+
+	} );
+
+	folder8.add( pAttr, 'orType', [ "Faced Based Pattern","Curvature Based Pattern","Crossing Pattern"] ).onChange( function () {
+
+		if (pAttr.bool === "true"){
+
+			if( pAttr.orType === "Faced Based Pattern"){
+				applyFacedBasedPattern()
+			}else if( pAttr.orType === "Curvature Based Pattern"){
+				applyCurvatureBasedPattern()
+			}else{
+				applyCrossingPattern()
+			}
+		}
+
+	} );
+
+	folder8.open();
+
 	gui.domElement.style.marginTop = "10px";
-	gui.domElement.style.marginLeft = "1010px";
-	gui2.domElement.style.marginTop = new String(test)+"px";
+	//console.log(window.innerWidth);
+	gui.domElement.style.marginLeft = new String(window.innerWidth - 530)+"px";
+	gui2.domElement.style.marginTop = new String(window.innerHeight - squareSize + 113)+"px";
 
 
 	// initialize objects
@@ -928,7 +974,7 @@ function ColumnGeometry( radiusTop, radiusBottom, height, segments, heightSegmen
 
 	var indices = [];
 	numVertices = segments * (heightSegments + 1);
-	console.log(numVertices*3);
+	//console.log(numVertices*3);
 	var vertices = new Float32Array(numVertices * 3);
 	//var vertices = [];
 	//var normals = [];
@@ -1237,8 +1283,8 @@ function getSpotLight(intensity, color) {
 	light.penumbra = 0.5;
 
 	//Set up shadow properties for the light
-	light.shadow.mapSize.width = 1024;  // default: 512
-	light.shadow.mapSize.height = 1024; // default: 512
+	light.shadow.mapSize.width = 2048;  // default: 512
+	light.shadow.mapSize.height = 2048; // default: 512
 	light.shadow.camera.near = 0.1;       // default
 	light.shadow.camera.far = 500;      // default
 	light.shadow.camera.fov = 30;      // default
@@ -1281,7 +1327,7 @@ function slice() {
 
 	boolSlice = !(boolSlice);
 
-	console.log(columngeoBuf.getAttribute('position').array);
+	//console.log(columngeoBuf.getAttribute('position').array);
 	helperDataSt = columngeoBuf.getAttribute('position').array;
 	
 	horizontalc = horizontalPlane.constant;
@@ -1439,6 +1485,10 @@ function update(renderer, scene, camera, controls, clock, sceneOrtho, cameraOrth
 
 		if (mirrorGeoBuf !== undefined){
 			mirrorGeoBuf.rotation.y -= 0.01; 
+		}
+
+		if (path3d !== undefined){
+			path3d.rotation.y -= 0.01; 
 		}
 	}
 
