@@ -192,6 +192,7 @@ function addTube() {
 
 	function Polyline3( points ) {
 
+		//inherite the properties from Curve Class
 		THREE.Curve.call( this );
 
 		// points is an array of THREE.Vector3()
@@ -199,10 +200,11 @@ function addTube() {
 
 	}
 
+	//inherite methods from Curve Class
 	Polyline3.prototype = Object.create( THREE.Curve.prototype );
 	Polyline3.prototype.constructor = Polyline3;
 
-	// define the getPoint function for the subClass
+	// define a new getPoint function for Polyline 3 Class
 	Polyline3.prototype.getPoint = function ( t ) {
 
 		// t is a float between 0 and 1
@@ -219,6 +221,7 @@ function addTube() {
 
 		var weight = d - index1;
 
+		//interpolate between two points
 		return new THREE.Vector3().copy( pt1 ).lerp( pt2, weight );
 
 	};
@@ -240,12 +243,51 @@ function addTube() {
 		}
 		var extrudePath = new Polyline3( newHelper );
 
+	///////////////test//////////////////////
+
+		pts = [];
+		numPts = 6;
+
+		//make a donut
+		layerHeight = 0.5;
+		layerWidth = 2.5 - 2 * layerHeight;
+
+		for ( var i = 0; i < numPts * 2; i ++ ) {
+
+			var a = i / numPts * Math.PI;
+			
+			pts.push( new THREE.Vector2( Math.cos( a ) * 0.25 , Math.sin( a ) * 0.25 ) );
+		}
+
+		h = 0;
+		for (p of pts){
+			if ( (h<3) || (h>8) ){
+				p += THREE.Vector2(0.75,0)
+			}else{
+				p -= THREE.Vector2(0.75,0)
+			}
+			h+=1
+		}
+
+		console.log(pts.length);
+
+		var shape = new THREE.Shape( pts );
+
+		extrudeSettings = {
+			
+			steps: helperDataSt.length/2,
+			bevelEnabled: false,
+			extrudePath: extrudePath
+		};
+
 
 		var material = getMaterial('lambert', 'rgb( 255, 255, 255)');
 
+		var testGeometry = new THREE.ExtrudeBufferGeometry( shape, extrudeSettings );
+
 		var tubeGeometry = new THREE.TubeBufferGeometry( extrudePath, newHelper.length*2, 0.3, params.radiusSegments, false );
 
-		path3d = new THREE.Mesh( tubeGeometry, material );
+		path3d = new THREE.Mesh( testGeometry, material );
 		scene.add(path3d);
 	
 	}else{
@@ -708,7 +750,7 @@ function init() {
 			}else if( pAttr.orType === "Curvature Based Pattern"){
 				applyCurvatureBasedPattern()
 			}else{
-				applyCrossingPattern()
+				applyCrossingPattern( curves, [0.11, 0.09, 0.08],  )
 			}
 		}
 
