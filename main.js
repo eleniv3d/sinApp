@@ -206,7 +206,7 @@ function addTube() {
 
 	// define a new getPoint function for Polyline 3 Class
 	Polyline3.prototype.getPoint = function ( t ) {
-
+	
 		// t is a float between 0 and 1
 
 		var points = this.points;
@@ -235,20 +235,10 @@ function addTube() {
 
 		//make new thing appear
 		helperDataSt = geoBuf.geometry.getAttribute('position').array;
-		newHelper = [];
 
-		//console.log(helperDataSt.length);
-		for (var i = 0; i < helperDataSt.length; i+=3) {
-			newHelper.push( new THREE.Vector3( helperDataSt[i], helperDataSt[i+1], helperDataSt[i+2] ) )
-		}
-		var extrudePath = new Polyline3( newHelper );
-
-	///////////////test//////////////////////
-
+		//////////////////////make a donut/////////////////////////
 		pts = [];
-		numPts = 6;
-
-		//make a donut
+		numPts = 5;
 		layerHeight = 0.5;
 		layerWidth = 2.5 - 2 * layerHeight;
 
@@ -256,39 +246,62 @@ function addTube() {
 
 			var a = i / numPts * Math.PI;
 			
-			pts.push( new THREE.Vector2( Math.cos( a ) * 0.25 , Math.sin( a ) * 0.25 ) );
+			pts.push( new THREE.Vector2( Math.sin( a ) * 0.3 , Math.cos( a ) * 0.3 ) );
 		}
 
 		h = 0;
 		for (p of pts){
-			if ( (h<3) || (h>8) ){
-				p += THREE.Vector2(0.75,0)
-			}else{
-				p -= THREE.Vector2(0.75,0)
+			if ( (h<=2) || (h>7) ){
+				p.add( new THREE.Vector2(0,0.9) )
+
+			}else if( (h>2) && (h<=7)){
+				p.add( new THREE.Vector2(0,-0.9) )
 			}
-			h+=1
+
+			if ((h === 2) || (h===3)) {
+				p.x = 0.25;
+			}
+			if ((h === 8) || (h===7)) {
+				p.x = - 0.25;
+			}
+
+			h +=1
 		}
 
-		console.log(pts.length);
-
 		var shape = new THREE.Shape( pts );
-
-		extrudeSettings = {
-			
-			steps: helperDataSt.length/2,
-			bevelEnabled: false,
-			extrudePath: extrudePath
-		};
-
-
+		geos = [];
 		var material = getMaterial('lambert', 'rgb( 255, 255, 255)');
 
-		var testGeometry = new THREE.ExtrudeBufferGeometry( shape, extrudeSettings );
+		for (var l = 0; l < nLayers; l++){
+			newHelper = [];
+			for (var i = 600*l; i < (l+1) * (helperDataSt.length/nLayers-1); i+=3) {
+				//console.log(i);
+				newHelper.push( new THREE.Vector3( helperDataSt[i], helperDataSt[i+1], helperDataSt[i+2] ) )
+			}
+			// var extrudePath = new Polyline3( newHelper );
 
-		var tubeGeometry = new THREE.TubeBufferGeometry( extrudePath, newHelper.length*2, 0.3, params.radiusSegments, false );
+			var closedSpline = new THREE.CatmullRomCurve3(newHelper );
+			closedSpline.curveType = 'catmullrom';
+			closedSpline.closed = true;
+		
+			extrudeSettings = {
+				
+				steps: 200,
+				bevelEnabled: false,
+				extrudePath: closedSpline
+			};
+			
+			var testGeometry = new THREE.ExtrudeBufferGeometry( shape, extrudeSettings );
+			geos.push(testGeometry);
+		}
+		//var tubeGeometry = new THREE.TubeBufferGeometry( extrudePath, newHelper.length*2, 0.3, params.radiusSegments, false );
 
-		path3d = new THREE.Mesh( testGeometry, material );
-		scene.add(path3d);
+		
+		//mesh = new THREE.Mesh(singleGeometry, material);
+		mesh = THREE.BufferGeometryUtils.mergeBufferGeometries(geos);
+		mergeMesh = new THREE.Mesh(mesh, material);
+
+		scene.add(mergeMesh);
 	
 	}else{
 		//if new thing exists delete it
@@ -1017,7 +1030,7 @@ function getGeometry(type, size, material, xSin, zSin, pSin, tog, helper, mAttr,
 
 		case 'myCylinder':
 			nLayers = 600;
-			nSegments = 300;
+			nSegments = 200;
 			height = 300;
 			geometry = ColumnGeometry(20, 20, height, nSegments, nLayers, 0, 2* Math.PI, xSin, zSin, pSin, tog, helper, mAttr, iterations, fourier );
 
