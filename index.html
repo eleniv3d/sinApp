@@ -58,11 +58,30 @@
 			border: none;
 		}
 
-
 	</style>
 
 </head>
 <body>
+
+	<script id="vertexShaderRaw" type="x-shader/x-vertex">
+		attribute float curvature;
+		varying float vCurvature;
+		void main() {
+
+			vec3 p = position;
+			vec4 modelViewPosition = modelViewMatrix * vec4( p , 1.0 );
+			gl_Position = projectionMatrix * modelViewPosition;
+			vCurvature = curvature;
+		}
+		</script>
+
+		<script id="fragmentShaderRaw" type="x-shader/x-fragment">
+		varying vec3 vViewPosition;
+		varying float vCurvature;
+		void main() {
+				gl_FragColor = vec4( vCurvature * 2.0, 0.0, 0.0, 0.0 );
+		}
+		</script>
 
 	<!-- <div style = "top:10px; width:100%; height:100px; font-weight:200; text-align:center; font-family:'Roboto',sans-serif; color:white;" class="head">DBT Concrete Choreography</div> -->
 	<button style="top:45px" id="reset" class="ui">RESET</button>
@@ -88,6 +107,7 @@
 	<link type="text/css" rel="stylesheet" href="lib/dat-gui-style.css">
 	<script src="lib/OrbitControls.js"></script>
 	<script type="text/javascript" src="lib/PatternCreation.js"></script>
+	<!-- <script type="text/javascript" src="lib/Curvature.js"></script> -->
 	<script src="main.js"></script>
 
 </body>

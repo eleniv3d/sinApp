@@ -781,7 +781,8 @@ function init() {
 
 	} );
 
-	folder8.add( pAttr, 'orType', [ "Simple Pattern", "Simple Noise", "Faced Based Pattern","Curvature Based Pattern","Crossing Pattern"] ).onChange( function () {
+	//"Faced Based Pattern","Curvature Based Pattern", "Crossing Pattern"
+	folder8.add( pAttr, 'orType', [ "Simple Pattern", "Simple Noise"] ).onChange( function () {
 
 		addTube();
 
