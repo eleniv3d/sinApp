@@ -36,7 +36,7 @@ var mAttr =new function() {
 
 var pAttr = new function() {
 	this.bool = false
-	this.orType = "Crossing Pattern"
+	this.orType = "Simple Pattern"
 }
 
 var fourier = new function(){
@@ -186,45 +186,46 @@ function getCustomMaterial(){
 
 function addTube() {
 
-	extrudeTog = !(extrudeTog);
+	//extrudeTog = !(extrudeTog);
+	extrudeTog = true;
 
 	// Polyline3 class
 
-	function Polyline3( points ) {
+	// function Polyline3( points ) {
 
-		//inherite the properties from Curve Class
-		THREE.Curve.call( this );
+	// 	//inherite the properties from Curve Class
+	// 	THREE.Curve.call( this );
 
-		// points is an array of THREE.Vector3()
-		this.points = points;
+	// 	// points is an array of THREE.Vector3()
+	// 	this.points = points;
 
-	}
+	// }
 
-	//inherite methods from Curve Class
-	Polyline3.prototype = Object.create( THREE.Curve.prototype );
-	Polyline3.prototype.constructor = Polyline3;
+	// //inherite methods from Curve Class
+	// Polyline3.prototype = Object.create( THREE.Curve.prototype );
+	// Polyline3.prototype.constructor = Polyline3;
 
-	// define a new getPoint function for Polyline 3 Class
-	Polyline3.prototype.getPoint = function ( t ) {
+	// // define a new getPoint function for Polyline 3 Class
+	// Polyline3.prototype.getPoint = function ( t ) {
 	
-		// t is a float between 0 and 1
+	// 	// t is a float between 0 and 1
 
-		var points = this.points;
+	// 	var points = this.points;
 
-		var d = ( points.length - 1 ) * t;
+	// 	var d = ( points.length - 1 ) * t;
 
-		var index1 = Math.floor( d );
-		var index2 = ( index1 < points.length - 1 ) ? index1 + 1 : index1;
+	// 	var index1 = Math.floor( d );
+	// 	var index2 = ( index1 < points.length - 1 ) ? index1 + 1 : index1;
 
-		var pt1 = points[ index1 ];
-		var pt2 = points[ index2 ];
+	// 	var pt1 = points[ index1 ];
+	// 	var pt2 = points[ index2 ];
 
-		var weight = d - index1;
+	// 	var weight = d - index1;
 
-		//interpolate between two points
-		return new THREE.Vector3().copy( pt1 ).lerp( pt2, weight );
+	// 	//interpolate between two points
+	// 	return new THREE.Vector3().copy( pt1 ).lerp( pt2, weight );
 
-	};
+	// };
 
 	if (extrudeTog === true) {
 		//hide column
@@ -233,10 +234,9 @@ function addTube() {
 			scene.remove(mirrorGeoBuf);
 		}
 
-		//make new thing appear
 		helperDataSt = geoBuf.geometry.getAttribute('position').array;
 
-		//////////////////////make a donut/////////////////////////
+		//////////////////////make a sausage/////////////////////////
 		pts = [];
 		numPts = 5;
 		layerHeight = 0.5;
@@ -269,6 +269,9 @@ function addTube() {
 		}
 
 		var shape = new THREE.Shape( pts );
+		//////////////////////make a sausage/////////////////////////
+
+
 		geos = [];
 		var material = getMaterial('lambert', 'rgb( 255, 255, 255)');
 
@@ -279,6 +282,22 @@ function addTube() {
 				newHelper.push( new THREE.Vector3( helperDataSt[i], helperDataSt[i+1], helperDataSt[i+2] ) )
 			}
 			// var extrudePath = new Polyline3( newHelper );
+
+			//apply pattern
+			if (pAttr.bool === "true"){
+
+				if( pAttr.orType === "Simple Pattern"){
+					newHelper = applySimplePattern(newHelper, l, pSin, zSin);
+				}else if(pAttr.orType === "Simple Noise"){
+					newHelper = applySimpleNoise(newHelper, l);
+				}else if(pAttr.orType === "Faced Based Pattern"){
+					applyFacedBasedPattern()
+				}else if( pAttr.orType === "Curvature Based Pattern"){
+					applyCurvatureBasedPattern()
+				}else{
+					applyCrossingPattern()
+				}
+			}
 
 			var closedSpline = new THREE.CatmullRomCurve3(newHelper );
 			closedSpline.curveType = 'catmullrom';
@@ -314,7 +333,6 @@ function addTube() {
 		if (mirrorTog === true){
 			addMirrorGeo(mirrorObjMaterial, true, xSin, zSin, pSin, mAttr, iterations, fourier, concreteTog );
 		}
-
 	}
 
 }
@@ -514,7 +532,7 @@ function init() {
 	myExporter = new THREE.STLExporter();
 
 	// ***** Clipping planes: *****
-	horizontalPlane = new THREE.Plane( new THREE.Vector3( 0, - 1, 0 ), 0.0 );
+	horizontalPlane = new THREE.Plane( new THREE.Vector3( 0, - 1, 0 ), 0.3 );
 
 	var folder2 = gui.addFolder('iterations');
 	folder2.add( iterations, 'number', 1, 4, 1).onChange( function () {
@@ -756,31 +774,13 @@ function init() {
 
 	folder8.add( pAttr, 'bool', ["true", "false"]).onChange( function () {
 
-		if (pAttr.bool === "true"){
-
-			if ( pAttr.orType === "Faced Based Pattern"){
-				applyFacedBasedPattern()
-			}else if( pAttr.orType === "Curvature Based Pattern"){
-				applyCurvatureBasedPattern()
-			}else{
-				applyCrossingPattern( curves, [0.11, 0.09, 0.08],  )
-			}
-		}
+		addTube();
 
 	} );
 
-	folder8.add( pAttr, 'orType', [ "Faced Based Pattern","Curvature Based Pattern","Crossing Pattern"] ).onChange( function () {
+	folder8.add( pAttr, 'orType', [ "Simple Pattern", "Simple Noise", "Faced Based Pattern","Curvature Based Pattern","Crossing Pattern"] ).onChange( function () {
 
-		if (pAttr.bool === "true"){
-
-			if( pAttr.orType === "Faced Based Pattern"){
-				applyFacedBasedPattern()
-			}else if( pAttr.orType === "Curvature Based Pattern"){
-				applyCurvatureBasedPattern()
-			}else{
-				applyCrossingPattern()
-			}
-		}
+		addTube();
 
 	} );
 
@@ -901,7 +901,7 @@ function init() {
 	folderHorizontal.open();
 
 	folderHorizontal.add( propsHorizontal, 'Enabled' );
-	folderHorizontal.add( propsHorizontal, 'Plane', -300, 0, -5 ).onChange( function () {
+	folderHorizontal.add( propsHorizontal, 'Plane', -300.3, 0.3, -5.0 ).onChange( function () {
 		if ( boolSlice == true){
 			addSlice( geoBuf, sliceLine, sliceGeometry, 'rgb( 255, 255, 255)', 0)
 		}
@@ -1134,9 +1134,9 @@ function slice() {
 	//console.log(columngeoBuf.getAttribute('position').array);
 	helperDataSt = columngeoBuf.getAttribute('position').array;
 	
-	horizontalc = horizontalPlane.constant;
+	horizontalc = horizontalPlane.constant - 0.3;
 
-	layerIndex = Math.floor(600 + horizontalPlane.constant*2) ;
+	layerIndex = Math.floor(600 + horizontalc * 2) ;
 	// console.log(layerIndex);
 	
 	if (boolSlice === true){
