@@ -1,5 +1,5 @@
 var scene, camera, myExporter, geoBuf, mirrorGeoBuf, particleSystem, indexArray, nLayers, nSegments, boolRot, boolSlice, params, extrudePath;
-var box, horizontalPlane, cameraOrtho, sceneOrtho, sliceLine, sliceGeometry, mirrorTog, mirrorType, axisline, columngeoBuf, path3d;
+var box, horizontalPlane, cameraOrtho, sceneOrtho, sliceLine, sliceGeometry, mirrorTog, mirrorType, axisline, columngeoBuf, path3d, mergeMesh;
 var mirrorObjMaterial;
 
 var iterations = new function() {
@@ -188,6 +188,9 @@ function addTube() {
 
 	//extrudeTog = !(extrudeTog);
 	extrudeTog = true;
+	if (mergeMesh !== undefined){
+		scene.remove(mergeMesh);
+	}
 
 	// Polyline3 class
 
@@ -305,7 +308,7 @@ function addTube() {
 		
 			extrudeSettings = {
 				
-				steps: 200,
+				steps: 800,
 				bevelEnabled: false,
 				extrudePath: closedSpline
 			};
