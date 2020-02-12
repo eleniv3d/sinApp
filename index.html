@@ -83,11 +83,38 @@
 
 	void main() {
 
-		gl_FragColor = vec4( vCurvature * 2.0, 0.0, 0.0, 0.5 );
+		gl_FragColor = vec4( vCurvature * 2.0, 0.0, 0.0, 0.0 );
 
 	}
 
 	</script>
+
+
+	<script id="vertexShaderOverhang" type="x-shader/x-vertex">
+		attribute float overhang;
+		varying float vOverhang;
+	
+		void main() {
+	
+			vec3 p = position;
+			vec4 modelViewPosition = modelViewMatrix * vec4( p , 1.0 );
+			gl_Position = projectionMatrix * modelViewPosition;
+			vOverhang = overhang;
+			
+		}
+		</script>
+	
+		<script id="fragmentShaderOverhang" type="x-shader/x-fragment">
+		varying vec3 vViewPosition;
+		varying float vOverhang;
+	
+		void main() {
+	
+			gl_FragColor = vec4( vOverhang * 2.0, 0.0, 0.0, 0.0 );
+	
+		}
+	
+		</script>
 
 	<!-- <div style = "top:10px; width:100%; height:100px; font-weight:200; text-align:center; font-family:'Roboto',sans-serif; color:white;" class="head">DBT Concrete Choreography</div> -->
 	<button style="top:45px" id="reset" class="ui">RESET</button>
@@ -111,6 +138,7 @@
 	<script src="lib/BufferGeometryUtils.js" ></script>
 	<script type="text/javascript" src="lib/CustomGeo.js"></script>
 	<script type="text/javascript" src="lib/Curvature.js"></script>
+	<script type="text/javascript" src="lib/Overhang.js"></script>
 
 	<script src="lib/stats.js"></script>
 	<script src="lib/STLExporter.js"></script>

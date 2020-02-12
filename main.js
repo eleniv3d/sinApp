@@ -206,6 +206,26 @@ function getCurvatureMaterial(geo){
 
 }
 
+
+function getOverhangMaterial(geo){
+
+	// after curvatureApproximation is called, curvature attribute is added to geoBuf, so then the shader can read it?
+	geoBuf = overhangApproximation(geo);
+
+	materialRaw = new THREE.ShaderMaterial({
+		side: THREE.DoubleSide,
+		// uniforms: uniforms,
+		vertexShader: document.getElementById( 'vertexShaderOverhang' ).textContent,
+		fragmentShader: document.getElementById( 'fragmentShaderOverhang' ).textContent,
+	})
+
+	//console.log(materialRaw);
+	return [materialRaw, geoBuf];
+
+}
+
+
+
 function addTube() {
 
 	//extrudeTog = !(extrudeTog);
@@ -377,12 +397,15 @@ function addGeo(objMaterial, tog, xSin, zSin, pSin, mAttr, iterations, fourier, 
 	if (curvatureTog === true){
 		values = getCurvatureMaterial(geoBuf)
 		objMaterial = values[0];
-		console.log( objMaterial);
+		//console.log( objMaterial);
 		columngeoBuf = values[1].geometry;
 	}
 
 	if (overhangTog === true){
-		objMaterial = getOverhangMaterial();
+		values = getOverhangMaterial(geoBuf)
+		objMaterial = values[0];
+		console.log( objMaterial);
+		columngeoBuf = values[1].geometry;
 	}
 
 	
