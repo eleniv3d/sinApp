@@ -64,24 +64,30 @@
 <body>
 
 	<script id="vertexShaderRaw" type="x-shader/x-vertex">
-		attribute float curvature;
-		varying float vCurvature;
-		void main() {
+	attribute float curvature;
+	varying float vCurvature;
 
-			vec3 p = position;
-			vec4 modelViewPosition = modelViewMatrix * vec4( p , 1.0 );
-			gl_Position = projectionMatrix * modelViewPosition;
-			vCurvature = curvature;
-		}
-		</script>
+	void main() {
 
-		<script id="fragmentShaderRaw" type="x-shader/x-fragment">
-		varying vec3 vViewPosition;
-		varying float vCurvature;
-		void main() {
-				gl_FragColor = vec4( vCurvature * 2.0, 0.0, 0.0, 0.0 );
-		}
-		</script>
+		vec3 p = position;
+		vec4 modelViewPosition = modelViewMatrix * vec4( p , 1.0 );
+		gl_Position = projectionMatrix * modelViewPosition;
+		vCurvature = curvature;
+		
+	}
+	</script>
+
+	<script id="fragmentShaderRaw" type="x-shader/x-fragment">
+	varying vec3 vViewPosition;
+	varying float vCurvature;
+
+	void main() {
+
+		gl_FragColor = vec4( vCurvature * 2.0, 0.0, 0.0, 0.5 );
+
+	}
+
+	</script>
 
 	<!-- <div style = "top:10px; width:100%; height:100px; font-weight:200; text-align:center; font-family:'Roboto',sans-serif; color:white;" class="head">DBT Concrete Choreography</div> -->
 	<button style="top:45px" id="reset" class="ui">RESET</button>
@@ -91,6 +97,10 @@
 	<button style="top:205px" id="slice" class="ui">SLICE</button>
 	<button style="top:245px" id="exportStl" class="ui">EXPORT</button>
 	<button style="top:285px" id="concrete" class="ui">PRINT IT</button>
+
+	<button style="left: 100px; top:285px" id="curvature" class="ui">CURVATURE</button>
+	<button style="left: 100px; top:245px" id="overhang" class="ui">OVERHANG</button>
+
 	<button style="top:325px" id="extrudepath" class="ui">PRINT PATH </button>
 	<button style="top:365px" id="snow" class="ui">LET IT SNOW</button>
 
@@ -100,6 +110,8 @@
 	<script src="lib/three.js"></script>
 	<script src="lib/BufferGeometryUtils.js" ></script>
 	<script type="text/javascript" src="lib/CustomGeo.js"></script>
+	<script type="text/javascript" src="lib/Curvature.js"></script>
+
 	<script src="lib/stats.js"></script>
 	<script src="lib/STLExporter.js"></script>
 	<script src="lib/perlin.js"></script>
@@ -107,7 +119,6 @@
 	<link type="text/css" rel="stylesheet" href="lib/dat-gui-style.css">
 	<script src="lib/OrbitControls.js"></script>
 	<script type="text/javascript" src="lib/PatternCreation.js"></script>
-	<!-- <script type="text/javascript" src="lib/Curvature.js"></script> -->
 	<script src="main.js"></script>
 
 </body>
