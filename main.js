@@ -1,6 +1,6 @@
 var scene, camera, myExporter, geoBuf, mirrorGeoBuf, particleSystem, indexArray, nLayers, nSegments, boolRot, boolSlice, params, extrudePath;
 var box, horizontalPlane, cameraOrtho, sceneOrtho, sliceLine, sliceGeometry, mirrorTog, mirrorType, axisline, columngeoBuf, path3d, mergeMesh;
-var mirrorObjMaterial;
+var mirrorObjMaterial, arrowHelper, mergeMesh;
 
 var iterations = new function() {
 	this.number = 1 ;
@@ -36,7 +36,7 @@ var mAttr =new function() {
 
 var pAttr = new function() {
 	this.bool = false
-	this.orType = "Simple Pattern"
+	this.orType = "Simple Noise"
 }
 
 var fourier = new function(){
@@ -187,16 +187,19 @@ function getCustomMaterial(){
 function getCurvatureMaterial(geo){
 
 	// after curvatureApproximation is called, curvature attribute is added to geoBuf, so then the shader can read it?
-	geoBuf = curvatureApproximation(geo, "both");
+	geoBuf = curvatureApproximation(geo, "both")[0];
+	console.log(curvatureApproximation(geo)[1]);
+	console.log(curvatureApproximation(geo)[2]);
 
-	// uniforms = {
-	// lightPos1 : {type: 'vec3', value: [-300, 200, 40]},
-	// lightPos2 : {type: 'vec3', value: [300, 200, 40]},
-	// lightPos3 : {type: 'vec3', value: [0, 100, 30]},
-	// }
+
+	uniforms = {
+		Cmin : {type: 'float', value: curvatureApproximation(geo)[1]},
+		Cmax : {type: 'float', value: curvatureApproximation(geo)[2]}
+		}
+
 	materialRaw = new THREE.ShaderMaterial({
 		side: THREE.DoubleSide,
-		// uniforms: uniforms,
+		uniforms: uniforms,
 		vertexShader: document.getElementById( 'vertexShaderRaw' ).textContent,
 		fragmentShader: document.getElementById( 'fragmentShaderRaw' ).textContent,
 	})
@@ -210,68 +213,35 @@ function getCurvatureMaterial(geo){
 function getOverhangMaterial(geo){
 
 	// after curvatureApproximation is called, curvature attribute is added to geoBuf, so then the shader can read it?
-	geoBuf = overhangApproximation(geo);
+	geoBuf = overhangApproximation(geo)[0];
+
+	uniforms = {
+		Omin : {type: 'float', value: overhangApproximation(geo)[1]},
+		Omax : {type: 'float', value: overhangApproximation(geo)[2]}
+	}
 
 	materialRaw = new THREE.ShaderMaterial({
 		side: THREE.DoubleSide,
-		// uniforms: uniforms,
+		uniforms: uniforms,
 		vertexShader: document.getElementById( 'vertexShaderOverhang' ).textContent,
 		fragmentShader: document.getElementById( 'fragmentShaderOverhang' ).textContent,
 	})
 
-	//console.log(materialRaw);
 	return [materialRaw, geoBuf];
 
 }
 
-
+function bothAddTube(){
+	extrudeTog = !(extrudeTog);
+	addTube()
+}
 
 function addTube() {
 
-	//extrudeTog = !(extrudeTog);
-	extrudeTog = true;
 	if (mergeMesh !== undefined){
 		scene.remove(mergeMesh);
 	}
-
-	// Polyline3 class
-
-	// function Polyline3( points ) {
-
-	// 	//inherite the properties from Curve Class
-	// 	THREE.Curve.call( this );
-
-	// 	// points is an array of THREE.Vector3()
-	// 	this.points = points;
-
-	// }
-
-	// //inherite methods from Curve Class
-	// Polyline3.prototype = Object.create( THREE.Curve.prototype );
-	// Polyline3.prototype.constructor = Polyline3;
-
-	// // define a new getPoint function for Polyline 3 Class
-	// Polyline3.prototype.getPoint = function ( t ) {
 	
-	// 	// t is a float between 0 and 1
-
-	// 	var points = this.points;
-
-	// 	var d = ( points.length - 1 ) * t;
-
-	// 	var index1 = Math.floor( d );
-	// 	var index2 = ( index1 < points.length - 1 ) ? index1 + 1 : index1;
-
-	// 	var pt1 = points[ index1 ];
-	// 	var pt2 = points[ index2 ];
-
-	// 	var weight = d - index1;
-
-	// 	//interpolate between two points
-	// 	return new THREE.Vector3().copy( pt1 ).lerp( pt2, weight );
-
-	// };
-
 	if (extrudeTog === true) {
 		//hide column
 		scene.remove(geoBuf);
@@ -326,7 +296,6 @@ function addTube() {
 				//console.log(i);
 				newHelper.push( new THREE.Vector3( helperDataSt[i], helperDataSt[i+1], helperDataSt[i+2] ) )
 			}
-			// var extrudePath = new Polyline3( newHelper );
 
 			//apply pattern
 			if (pAttr.bool === "true"){
@@ -445,6 +414,44 @@ function addMirrorGeo(mirrorObjMaterial, tog, xSin, zSin, pSin,mAttr, iterations
 	mirrorGeoBuf.name = 'column-2'
 	scene.add(mirrorGeoBuf);
 }
+
+function zoomIn(){
+	camera.position.x = 0;
+	camera.position.y = -50;
+	camera.position.z = -100;
+
+	camX = camera.position.x
+	camY = camera.position.y
+	camZ = camera.position.z
+	controls.object.position.set(camX, camY, camZ);
+	//camera.zoom = 2;
+	targetX = 20;
+	targetY = -100;
+	targetZ = 20;
+	controls.target = new THREE.Vector3(targetX, targetY, targetZ);
+	boolRot = false;
+
+}
+
+
+function zoomOut(){
+
+	camera.position.x = -300;
+	camera.position.y = 100;
+	camera.position.z = 50;
+
+	camX = camera.position.x
+	camY = camera.position.y
+	camZ = camera.position.z
+	controls.object.position.set(camX, camY, camZ);
+
+	targetX = 0;
+	targetY = -100;
+	targetZ = 0;
+	controls.target = new THREE.Vector3(targetX, targetY, targetZ);
+	boolRot = true;
+}
+
 
 function addSlice(ch, sliceLine, sliceGeometry, c, type) {
 
@@ -817,6 +824,7 @@ function init() {
 
 	folder8.add( pAttr, 'bool', ["true", "false"]).onChange( function () {
 
+		extrudeTog = true;
 		addTube();
 
 	} );
@@ -961,6 +969,9 @@ function init() {
 	var buttonExportStl = document.getElementById( 'exportStl' );
 	buttonExportStl.addEventListener( 'click', exportSTL );
 
+	var buttonNormals = document.getElementById( 'normals' );
+	buttonNormals.addEventListener( 'click', normals );
+
 	var buttonReset = document.getElementById( 'reset' );
 	buttonReset.addEventListener( 'click', reset );
 
@@ -976,6 +987,12 @@ function init() {
 	var buttonMirror = document.getElementById( 'mirror' );
 	buttonMirror.addEventListener( 'click', mirror );
 
+	var buttonZoomIn = document.getElementById( 'in' );
+	buttonZoomIn.addEventListener( 'click', zoomIn );
+
+	var buttonZoomOut = document.getElementById( 'out' );
+	buttonZoomOut.addEventListener( 'click', zoomOut );
+
 	window.addEventListener( 'resize', onWindowResize, false );
 	
 	boolRot = true;
@@ -989,7 +1006,7 @@ function init() {
 	buttonSlice.addEventListener( 'click', slice );
 
 	var buttonExtrude = document.getElementById( 'extrudepath');
-	buttonExtrude.addEventListener( 'click', addTube);
+	buttonExtrude.addEventListener( 'click', bothAddTube);
 
 	var particleGeo = new THREE.Geometry();
 	var particleMat = new THREE.PointsMaterial( {
@@ -1153,6 +1170,37 @@ function exportSTL() {
 
 	var result = myExporter.parse( scene, { binary: true } );
 	saveArrayBuffer( result, 'column.stl' );
+}
+
+function normals(){
+
+	if (arrowHelper === undefined){
+		var array = geoBuf.geometry.getAttribute('position').array;
+		var normArray = geoBuf.geometry.getAttribute('normal').array;
+		for ( var i = 0; i < geoBuf.geometry.attributes.position.count; i += 3 ) {
+
+			var dir = new THREE.Vector3( normArray[ 3 * i ], normArray[ 3 * i + 1 ], normArray[ 3 * i + 2 ] ).normalize();
+			var origin = new THREE.Vector3( array[ 3 * i ], array[ 3 * i + 1 ], array[ 3 * i + 2 ] );
+			var length = 10;
+			var hex = 0xffff00;
+
+			arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex );
+			arrowHelper.name = "arrow"
+			scene.add( arrowHelper );
+		}
+
+	}else{
+
+		for(var i=0; i < scene.children.length; i++){
+			obj = scene.children[i];
+			
+			if (obj.name === 'arrow'){
+				console.log( "yes" );
+				sceneOrtho.remove(obj);
+			}						
+		}
+
+	}
 }
 
 function concrete() {
@@ -1346,7 +1394,6 @@ function onWindowResize() {
 
 function update(renderer, scene, camera, controls, clock, sceneOrtho, cameraOrtho, stats) {
 	// rotate camera around the origin
-	var sceneCameraGroup = scene.getObjectByName('sceneCameraGroup');
 
 	var particleSystem = scene.getObjectByName('particleSystem');
 	//particleSystem.rotation.y += 0.005;
@@ -1391,8 +1438,8 @@ function update(renderer, scene, camera, controls, clock, sceneOrtho, cameraOrth
 			mirrorGeoBuf.rotation.y -= 0.01; 
 		}
 
-		if (path3d !== undefined){
-			path3d.rotation.y -= 0.01; 
+		if (mergeMesh !== undefined){
+			mergeMesh.rotation.y -= 0.01; 
 		}
 	}
 
